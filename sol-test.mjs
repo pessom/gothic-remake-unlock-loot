@@ -132,5 +132,38 @@ for (const file of ['index.html', 'en/index.html']) {
     solved++;
   }
   console.log(`  fuzz: 300 locks, ${solved} solvable, all move- and switch-optimal`);
+
+  // фузз на 6 плиток: в игре обычно 6, коридоры шире
+  let solved6 = 0;
+  for (let t = 0; t < 40; t++) {
+    const pins6 = Array.from({ length: 6 }, () => 1 + Math.floor(rnd() * 7));
+    const link6 = Array.from({ length: 6 }, (_, i) => Array.from({ length: 6 }, (_, j) => {
+      if (i === j) return 0;
+      const r = rnd();
+      return r < 0.12 ? 1 : r < 0.24 ? -1 : 0;
+    }));
+    const got = solveLock(pins6.slice(), link6);
+    const want = bruteBest(pins6, link6);
+    if ((got === null) !== (want === null)) throw new Error(file + ': 6-plate solvability mismatch ' + JSON.stringify({ pins6, link6 }));
+    if (!want) continue;
+    if (!verify(pins6, link6, got) || got.length !== want.moves || switches(got) !== want.sw)
+      throw new Error(file + ': 6-plate not optimal ' + JSON.stringify({ pins6, link6 }));
+    solved6++;
+  }
+  console.log(`  fuzz 6 plates: 40 locks, ${solved6} solvable, all optimal`);
+
+  // широкий коридор (8 плиток, ~600k состояний): раньше уходил в жадный
+  // запасной путь и давал 50 переключений вместо 24
+  {
+    const p8 = [3, 4, 7, 3, 6, 1, 7, 2];
+    const l8 = [
+      [0, 0, 0, 0, 1, 0, 0, -1], [-1, 0, 0, 0, 0, 1, 0, -1], [0, 0, 0, 0, -1, -1, 0, 0], [0, 1, -1, 0, 1, 1, 0, 0],
+      [0, -1, 0, 1, 0, -1, 0, 0], [-1, 0, 0, -1, 0, 0, 1, 0], [-1, -1, 1, -1, 0, 0, 0, 0], [-1, 0, 0, 1, 0, 0, -1, 0],
+    ];
+    const got = solveLock(p8.slice(), l8);
+    if (!got || !verify(p8, l8, got) || got.length !== 95 || switches(got) !== 24)
+      throw new Error(file + `: wide corridor ${got && got.length} moves, ${got && switches(got)} switches (want 95 / 24)`);
+    console.log('  wide 8-plate corridor: 95 moves, 24 switches (optimal)');
+  }
 }
 console.log('OK');
