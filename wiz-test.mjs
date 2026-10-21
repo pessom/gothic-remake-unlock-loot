@@ -44,11 +44,18 @@ function gameMove(pins, hidden, i, d) {
 
 function rnd(n) { return Math.floor(Math.random() * n); }
 
-function runLock(ctx, N, startPins, hidden, preset, label, expectCmds) {
+function runLock(ctx, N, startPins, hidden, preset, label, expectCmds, sugg) {
   ctx.N = N;
   ctx.link = preset.map((r) => r.slice());
-  const wiz = { sim: startPins.slice(), cmd: null, step: 0, confirmedZero: null, rows0: 0 };
+  const wiz = { sim: startPins.slice(), cmd: null, step: 0, confirmedZero: null, unverified: null, rows0: 0 };
   wiz.confirmedZero = ctx.wizMk2d(false);
+  // подсказка: ячейки заполнены (в т.ч. «нет связи»), но не сверены с игрой
+  if (sugg) {
+    wiz.unverified = ctx.wizMk2d(false);
+    for (let i = 0; i < N; i++)
+      for (let j = 0; j < N; j++)
+        if (i !== j && sugg[i]) { wiz.unverified[i][j] = true; wiz.confirmedZero[i][j] = ctx.link[i][j] === 0; }
+  }
   wiz.rows0 = ctx.wizRowsLeft(wiz);
   let game = startPins.slice();
   let guard = 0;
@@ -109,6 +116,7 @@ function runLock(ctx, N, startPins, hidden, preset, label, expectCmds) {
   for (let i = 0; i < N; i++)
     for (let j = 0; j < N; j++) {
       if (i === j) continue;
+      if (wiz.unverified && wiz.unverified[i][j]) continue; // не сверено - мастер честно сообщил
       if (wiz.confirmedZero[i][j] && hidden[i][j] !== 0)
         throw new Error(label + ': confirmed zero but hidden link ' + (i + 1) + '->' + (j + 1));
       if (ctx.link[i][j] !== 0 && probed.has(i) && ctx.link[i][j] !== hidden[i][j])
@@ -180,4 +188,43 @@ for (const file of files) {
   }
   console.log('OK', file, '- walkthrough + mutual-wall +', TRIALS, 'fuzz locks;',
     'stuck:', stuck, 'avg wall hits:', (totalFail / TRIALS).toFixed(2));
+
+  // Подсказка с ошибкой: строки из подсказки мастер обязан сверить пробой,
+  // а не принять на веру (иначе неверная связь уходит в решение).
+  let sgStuck = 0;
+  for (let t = 0; t < TRIALS; t++) {
+    const N = 3 + rnd(4);
+    const pins = Array.from({ length: N }, () => 1 + rnd(7));
+    const hidden = zero(N);
+    for (let i = 0; i < N; i++)
+      for (let j = 0; j < N; j++)
+        if (i !== j && Math.random() < 0.25) hidden[i][j] = Math.random() < 0.5 ? 1 : -1;
+    const sugg = Array.from({ length: N }, () => Math.random() < 0.7);
+    sugg[rnd(N)] = true;
+    const preset = zero(N);
+    for (let i = 0; i < N; i++) if (sugg[i]) for (let j = 0; j < N; j++) if (i !== j) preset[i][j] = hidden[i][j];
+    let bi, bj;
+    do { bi = rnd(N); bj = rnd(N); } while (bi === bj || !sugg[bi]);
+    preset[bi][bj] = preset[bi][bj] === 0 ? (Math.random() < 0.5 ? 1 : -1) : -preset[bi][bj];
+    const r = runLock(ctx, N, pins, hidden, preset, file + ' wrong-suggest#' + t + ' N=' + N + ' pins=' + pins, null, sugg);
+    if (r.stuck) sgStuck++;
+    else for (let i = 0; i < N; i++)
+      for (let j = 0; j < N; j++)
+        if (i !== j && ctx.link[i][j] !== hidden[i][j])
+          throw new Error(file + ' wrong-suggest#' + t + ': suggested link not corrected ' + (i + 1) + '->' + (j + 1));
+  }
+  console.log('OK', file, '- wrong suggestion verified by probes,', TRIALS, 'locks; stuck:', sgStuck);
+
+  // Успешный ход без отметки уже известной связи - мастер должен переспросить,
+  // а не стереть связь молча.
+  {
+    ctx.N = 3;
+    ctx.link = [[0, 1, 0], [0, 0, 0], [0, 0, 0]];
+    const wiz = { sim: [4, 4, 4], confirmedZero: ctx.wizMk2d(false), unverified: null, step: 0 };
+    const cmd = { driver: 0, d: 1 };
+    if (JSON.stringify(ctx.wizDroppedKnown(wiz, cmd, [])) !== '[1]') throw new Error(file + ': dropped known link not detected');
+    if (ctx.wizDroppedKnown(wiz, cmd, [{ plate: 1, link: 1, jerk: false }]).length) throw new Error(file + ': false dropped');
+    if (ctx.wizDroppedKnown(wiz, cmd, [{ plate: 2, link: 1, jerk: true }]).length) throw new Error(file + ': failed move must not ask');
+    console.log('OK', file, '- dropped known link asks again');
+  }
 }

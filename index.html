@@ -1880,97 +1880,70 @@ function solveLock(start, link) {
   if (L === UNSEEN) return null;
   var distG = bfs(goal, L, -1);
 
-  // слои коридора кратчайших путей
-  var layers = [];
-  for (var t = 0; t <= L; t++) layers.push([]);
-  var corridor = 0;
+  /* коридор кратчайших путей, пронумерованный по слоям: cid[s] - номер
+     состояния в коридоре, order[c] - обратно. Очередь BFS больше не нужна,
+     её память переиспользуем под cid (значимы только ячейки коридора). */
+  var cid = queue;
+  var layerStart = new Int32Array(L + 2);
+  for (var s1 = 0; s1 < total; s1++) {
+    var a1 = distS[s1], b1 = distG[s1];
+    if (a1 !== UNSEEN && b1 !== UNSEEN && a1 + b1 === L) layerStart[a1 + 1]++;
+  }
+  for (var t = 0; t <= L; t++) layerStart[t + 1] += layerStart[t];
+  var corridor = layerStart[L + 1];
+  var order = new Int32Array(corridor);
+  var fillAt = layerStart.slice(0, L + 1);
   for (var s2 = 0; s2 < total; s2++) {
     var a = distS[s2], b = distG[s2];
-    if (a !== UNSEEN && b !== UNSEEN && a + b === L) { layers[a].push(s2); corridor++; }
+    if (a !== UNSEEN && b !== UNSEEN && a + b === L) { cid[s2] = fillAt[a]; order[fillAt[a]++] = s2; }
   }
 
-  function movesOf(seq) {
-    return seq.map(function (mi) { return { plate: moves[mi].plate, d: moves[mi].d }; });
-  }
-
-  /* запасной вариант для патологически широких коридоров: жадно идём
-     вперёд, предпочитая ту же плитку, что и на прошлом ходу */
-  if (corridor > 200000) {
-    var seqG = [], curG = startIdx, lastG = -1;
-    for (var tg = 0; tg < L; tg++) {
-      var xg = curG;
-      for (var jg = 0; jg < n; jg++) { digits[jg] = xg % 7; xg = (xg - digits[jg]) / 7; }
-      var pick = -1, pickNxt = 0;
-      for (var mg = 0; mg < moves.length; mg++) {
-        var mvg = moves[mg], okg = true;
-        for (var jg2 = 0; jg2 < n; jg2++) {
-          var ndg = digits[jg2] + mvg.eff[jg2];
-          if (ndg < 0 || ndg > 6) { okg = false; break; }
-        }
-        if (!okg) continue;
-        var nxtg = curG + mvg.delta;
-        if (distG[nxtg] !== L - tg - 1) continue;
-        if (pick < 0 || mvg.plate === lastG) { pick = mg; pickNxt = nxtg; if (mvg.plate === lastG) break; }
+  /* точный DP: состояние = (позиции, последняя двигавшаяся плитка).
+     best - минимум переключений, from - откуда пришли: номер хода * W + прошлая
+     плитка (2n * (n+1) <= 144, влезает в байт). */
+  var W = n + 1, NONE = 0xffff;
+  var best = new Uint16Array(corridor * W).fill(NONE);
+  var from = new Uint8Array(corridor * W);
+  best[cid[startIdx] * W + n] = 0;
+  for (var c = 0; c < layerStart[L]; c++) {
+    var st = order[c], t2 = distS[st], base = c * W;
+    var x2 = st;
+    for (var j5 = 0; j5 < n; j5++) { digits[j5] = x2 % 7; x2 = (x2 - digits[j5]) / 7; }
+    for (var m2 = 0; m2 < moves.length; m2++) {
+      var mv2 = moves[m2], ok2 = true;
+      for (var j6 = 0; j6 < n; j6++) {
+        var nd2 = digits[j6] + mv2.eff[j6];
+        if (nd2 < 0 || nd2 > 6) { ok2 = false; break; }
       }
-      seqG.push(pick);
-      lastG = moves[pick].plate;
-      curG = pickNxt;
-    }
-    return movesOf(seqG);
-  }
-
-  // точный DP: состояние = (позиции, последняя двигавшаяся плитка)
-  var W = n + 1;
-  var best = new Map();
-  var from = new Map();
-  best.set(startIdx * W + n, 0);
-  for (var t2 = 0; t2 < L; t2++) {
-    var layer = layers[t2];
-    for (var li = 0; li < layer.length; li++) {
-      var st = layer[li];
-      var x2 = st;
-      for (var j5 = 0; j5 < n; j5++) { digits[j5] = x2 % 7; x2 = (x2 - digits[j5]) / 7; }
-      for (var m2 = 0; m2 < moves.length; m2++) {
-        var mv2 = moves[m2], ok2 = true;
-        for (var j6 = 0; j6 < n; j6++) {
-          var nd2 = digits[j6] + mv2.eff[j6];
-          if (nd2 < 0 || nd2 > 6) { ok2 = false; break; }
-        }
-        if (!ok2) continue;
-        var nxt2 = st + mv2.delta;
-        if (distS[nxt2] !== t2 + 1 || distG[nxt2] !== L - t2 - 1) continue;
-        for (var last = 0; last <= n; last++) {
-          var key = st * W + last;
-          var sw = best.get(key);
-          if (sw === undefined) continue;
-          var nsw = sw + (mv2.plate === last ? 0 : 1);
-          var nkey = nxt2 * W + mv2.plate;
-          var old = best.get(nkey);
-          if (old === undefined || nsw < old) {
-            best.set(nkey, nsw);
-            from.set(nkey, [key, m2]);
-          }
-        }
+      if (!ok2) continue;
+      var nxt2 = st + mv2.delta;
+      if (distS[nxt2] !== t2 + 1 || distG[nxt2] !== L - t2 - 1) continue;
+      var nkey = cid[nxt2] * W + mv2.plate;
+      for (var last = 0; last <= n; last++) {
+        var sw = best[base + last];
+        if (sw === NONE) continue;
+        var nsw = sw + (mv2.plate === last ? 0 : 1);
+        if (nsw < best[nkey]) { best[nkey] = nsw; from[nkey] = m2 * W + last; }
       }
     }
   }
 
-  var bestLast = -1, bestSw = Infinity;
+  var gc = cid[goal], bestLast = -1, bestSw = NONE;
   for (var l2 = 0; l2 < n; l2++) {
-    var v = best.get(goal * W + l2);
-    if (v !== undefined && v < bestSw) { bestSw = v; bestLast = l2; }
+    var v = best[gc * W + l2];
+    if (v < bestSw) { bestSw = v; bestLast = l2; }
   }
   if (bestLast < 0) return null;
   var seq = [];
-  var curKey = goal * W + bestLast;
-  var rootKey = startIdx * W + n;
-  while (curKey !== rootKey) {
-    var f = from.get(curKey);
-    seq.push(f[1]);
-    curKey = f[0];
+  var cc = gc, cl = bestLast;
+  for (var k2 = 0; k2 < L; k2++) {
+    var f = from[cc * W + cl], mi = (f / W) | 0;
+    seq.push({ plate: moves[mi].plate, d: moves[mi].d });
+    cc = cid[order[cc] - moves[mi].delta];
+    cl = f % W;
   }
   seq.reverse();
-  return movesOf(seq);
+  return seq;
 }
 /* solver-end */
 
@@ -2373,14 +2346,19 @@ function renderLinkSum() {
 
 /* ---------- мастер безопасного поиска связей ---------- */
 var LINK_WIZ = null;
-/* память мастера между открытиями: подтверждённые "нет связи" и исходные позиции замка (для R) */
-var WIZ_MEM = { zero: null, base: null };
+/* память мастера между открытиями: подтверждённые "нет связи", исходные позиции
+   замка (для R) и ячейки из подсказки, которые ещё не сверены с игрой (unv) */
+var WIZ_MEM = { zero: null, base: null, unv: null };
 function wizMemReset() {
   WIZ_MEM.zero = null;
   WIZ_MEM.base = null;
+  WIZ_MEM.unv = null;
 }
 function wizEnsureZero() {
   if (!WIZ_MEM.zero || WIZ_MEM.zero.length !== N) WIZ_MEM.zero = wizMk2d(false);
+}
+function wizEnsureUnv() {
+  if (!WIZ_MEM.unv || WIZ_MEM.unv.length !== N) WIZ_MEM.unv = wizMk2d(false);
 }
 /* ячейка матрицы известна: явная связь или подтверждённое «нет связи» */
 function linkCellKnown(i, j) {
@@ -2400,6 +2378,7 @@ function matrixNeedsSuggest() {
 function syncLinkManualZero(i, j, v) {
   wizEnsureZero();
   WIZ_MEM.zero[i][j] = (v === 0);
+  if (WIZ_MEM.unv && WIZ_MEM.unv.length === N) WIZ_MEM.unv[i][j] = false; /* ручная отметка - решение пользователя */
 }
 function wizSyncPins(wiz) {
   for (var i = 0; i < N; i++) pins[i] = wiz.sim[i];
@@ -2448,10 +2427,14 @@ function wizMk2d(fill) {
   for (var i = 0; i < N; i++) { a[i] = []; for (var j = 0; j < N; j++) a[i][j] = fill; }
   return a;
 }
+/* строку нужно пробовать, пока в ней есть неизвестные ячейки или ячейки из
+   подсказки, не сверенные с игрой: по непроверенной строке нельзя ни решать,
+   ни делать вспомогательные ходы - при ошибке в подсказке позиции разъедутся. */
 function wizRowNeedsProbe(wiz, i) {
   for (var j = 0; j < N; j++) {
     if (j === i) continue;
     if (link[i][j] === 0 && !wiz.confirmedZero[i][j]) return true;
+    if (wiz.unverified && wiz.unverified[i][j]) return true;
   }
   return false;
 }
@@ -2562,8 +2545,10 @@ function wizApplyOutcome(wiz, cmd, movers) {
   for (var m2 = 0; m2 < movers.length; m2++) {
     if (failed && !movers[m2].jerk) continue;
     link[i][movers[m2].plate] = movers[m2].link;
+    if (wiz.unverified) wiz.unverified[i][movers[m2].plate] = false;
   }
   if (!failed) {
+    if (wiz.unverified) for (var u = 0; u < N; u++) wiz.unverified[i][u] = false;
     var nxt = wiz.sim.slice();
     nxt[i] += d;
     var seen = {};
@@ -2581,6 +2566,20 @@ function wizApplyOutcome(wiz, cmd, movers) {
   }
   wiz.step++;
   return failed;
+}
+/* известные связи, которые пользователь не отметил при успешном ходе. Перед тем
+   как записать «нет связи», переспрашиваем: одна пропущенная отметка иначе молча
+   стирает связь, и позиции мастера расходятся с игрой. */
+function wizDroppedKnown(wiz, cmd, movers) {
+  var seen = {};
+  for (var m = 0; m < movers.length; m++) {
+    if (movers[m].jerk) return [];
+    seen[movers[m].plate] = true;
+  }
+  var out = [];
+  for (var j = 0; j < N; j++)
+    if (j !== cmd.driver && link[cmd.driver][j] && !seen[j]) out.push(j);
+  return out;
 }
 /* wiz-core-end */
 function wizFlashDeps(driver, movers) {
@@ -2663,14 +2662,13 @@ function wizMaybeSuggest() {
       trackEvent('suggest_apply_ok');
       LINK_WIZ.sim = pins.slice();
       LINK_WIZ.confirmedZero = WIZ_MEM.zero;
+      LINK_WIZ.unverified = WIZ_MEM.unv;
       LINK_WIZ.rows0 = wizRowsLeft(LINK_WIZ);
+      /* подсказка - только ожидание: каждую подставленную строку мастер сверит
+         одной пробой, ожидаемые плитки будут отмечены заранее */
       toast(SUGGEST_CONFLICTS
         ? 'Подставлено: ' + n + ', но ' + SUGGEST_CONFLICTS + ' яч. отличались от твоих отметок'
-        : 'Подставлено связей: ' + n + ' - осталось проверить ' + matrixUnknownCount());
-      if (matrixUnknownCount() === 0) {
-        wizRenderDone();
-        return;
-      }
+        : 'Подставлено связей: ' + n + ' - сверим их пробами, ожидаемое отмечу заранее');
       wizRenderStep();
     };
   });
@@ -2865,6 +2863,7 @@ function wizRenderStepVisual(wiz, c) {
     '<div class="wv">' +
     wizRenderSchematic(wiz, i, d) +
     '<div class="wv-opts">' + opts + '</div>' +
+    wizPrefillNote(wiz, c) +
     '<label class="wv-reset" id="wvReset" hidden><input type="checkbox" id="wvResetCb">' +
     '<span>Это была последняя ошибка: <b>замок сбросился</b>. Связь всё равно запишем, а штифты вернём к исходным позициям.</span></label>' +
     '</div>';
@@ -2874,10 +2873,36 @@ function wizRenderStepVisual(wiz, c) {
     '<p class="wizfoot-aside"><button type="button" id="wizGameReset">Случайно сбросил замок</button></p>';
   wizBindVisualActions(wiz, c);
 }
+/* пояснение к заранее отмеченным плиткам: по известным связям (в т.ч. из подсказки) */
+function wizPrefillNote(wiz, c) {
+  var js = wizPredictKnownMovers(wiz, c).map(function (m) { return m.plate + 1; });
+  if (!js.length) return '';
+  return '<p class="wizhelpnote">Заранее отмечено по известным связям: ' +
+    (js.length > 1 ? 'плитки' : 'плитка') + ' <b>' + js.join(', ') + '</b>. Сверь с игрой и исправь, если что-то не так.</p>';
+}
+/* true - можно записывать; false - предупредили о снятой известной связи и ждём
+   повторного нажатия (guard помнит, о каких плитках уже спросили) */
+function wizCheckDropped(wiz, c, movers, guard) {
+  var dropped = wizDroppedKnown(wiz, c, movers);
+  if (!dropped.length) return true;
+  var key = dropped.join(',');
+  if (guard.key === key) return true;
+  guard.key = key;
+  var names = dropped.map(function (j) { return j + 1; }).join(', ');
+  toast(dropped.length > 1
+    ? 'Плитки ' + names + ' по известным связям должны были сдвинуться. Если не двигались - нажми ещё раз'
+    : 'Плитка ' + names + ' по известной связи должна была сдвинуться. Если не двигалась - нажми ещё раз');
+  return false;
+}
 function wizBindVisualActions(wiz, c) {
   var i = c.driver, d = c.d;
   var state = {};                                 // j -> 'c'|'l'|'r'
+  var pre = {};                                   // j -> заранее отмеченное направление
+  var guard = {};
   for (var j = 0; j < N; j++) if (j !== i) state[j] = 'c';
+  wizPredictKnownMovers(wiz, c).forEach(function (m) {
+    pre[m.plate] = state[m.plate] = (m.link * d > 0) ? 'l' : 'r'; // штифт вправо = плитка влево
+  });
   var body = document.getElementById('linkWizBody');
   function paint() {
     body.querySelectorAll('.wv-seg').forEach(function (s) {
@@ -2919,15 +2944,18 @@ function wizBindVisualActions(wiz, c) {
     state[+b.closest('.wv-seg').dataset.j] = b.dataset.d; paint();
   };
   document.getElementById('wizConfirm').onclick = function () {
-    var movers = [], jerks = 0, slides = 0;
+    var movers = [], jerks = 0, slides = 0, ownSlides = 0;
     for (var j = 0; j < N; j++) {
       if (j === i || state[j] === 'c') continue;
       var o = wvOptsFor(wiz, j, d), opt = state[j] === 'l' ? o.l : o.r;
       if (!opt) continue;
-      if (opt.jerk) jerks++; else slides++;
+      if (opt.jerk) jerks++; else { slides++; if (pre[j] !== state[j]) ownSlides++; }
       movers.push({ plate: j, link: opt.link, jerk: opt.jerk });
     }
-    if (jerks > 0 && slides > 0) { toast('Если кто-то упёрся в стену, ход не прошёл - съехать никто не мог. Проверь отметки'); return; }
+    /* ход упёрся - заранее отмеченные «съезды» не случились, их просто отбрасываем */
+    if (jerks > 0 && ownSlides > 0) { toast('Если кто-то упёрся в стену, ход не прошёл - съехать никто не мог. Проверь отметки'); return; }
+    if (jerks > 0 && slides > 0) movers = movers.filter(function (m) { return m.jerk; });
+    if (!jerks && !wizCheckDropped(wiz, c, movers, guard)) return;
     var lockReset = jerks > 0 && document.getElementById('wvResetCb').checked;
     wizFinishStep(wiz, c, movers, lockReset);
   };
@@ -2968,10 +2996,24 @@ function wizBindStepActions(wiz, c, chipsEl, moversEl) {
     btn.classList.add('on');
     wizSyncLockReset();
   };
+  /* заранее отмечаем плитки с известными связями (в т.ч. из подсказки) */
+  var pre = {}, guard = {};
+  wizPredictKnownMovers(wiz, c).forEach(function (m) {
+    var lab = chipsEl.querySelector('.wizchip[data-j="' + m.plate + '"]');
+    var pos = moversEl.querySelector('.wizpos[data-j="' + m.plate + '"][data-l="' + m.link + '"]');
+    if (!lab || !pos) return;
+    lab.querySelector('input').checked = true;
+    pos.classList.add('on');
+    pre[m.plate] = m.link;
+  });
+  wizSyncMovers();
   function wizFinish(movers, lockReset) { wizFinishStep(wiz, c, movers, lockReset); }
-  document.getElementById('wizNone').onclick = function () { wizFinish([], false); };
+  document.getElementById('wizNone').onclick = function () {
+    if (!wizCheckDropped(wiz, c, [], guard)) return;
+    wizFinish([], false);
+  };
   document.getElementById('wizConfirm').onclick = function () {
-    var movers = [], bad = false, jerks = 0, slides = 0;
+    var movers = [], bad = false, jerks = 0, slides = 0, ownSlides = 0;
     chipsEl.querySelectorAll('.wizchip input:checked').forEach(function (inp) {
       var j = +inp.closest('.wizchip').dataset.j;
       var sel = moversEl.querySelector('.wizpos.on[data-j="' + j + '"]');
@@ -2981,14 +3023,17 @@ function wizBindStepActions(wiz, c, chipsEl, moversEl) {
         return;
       }
       var jerk = sel.dataset.jerk === '1';
-      if (jerk) jerks++; else slides++;
+      if (jerk) jerks++; else { slides++; if (pre[j] !== +sel.dataset.l) ownSlides++; }
       movers.push({ plate: j, link: +sel.dataset.l, jerk: jerk });
     });
     if (bad) return;
-    if (jerks > 0 && slides > 0) {
+    if (jerks > 0 && ownSlides > 0) {
       toast('Если кто-то упёрся в стену, ход не прошёл и съехать никто не мог. Проверь отметки');
       return;
     }
+    /* ход упёрся - заранее отмеченные «съезды» не случились, их просто отбрасываем */
+    if (jerks > 0 && slides > 0) movers = movers.filter(function (m) { return m.jerk; });
+    if (!jerks && !wizCheckDropped(wiz, c, movers, guard)) return;
     var lockReset = jerks > 0 && document.getElementById('wizLockResetCb').checked;
     wizFinish(movers, lockReset);
   };
@@ -3088,6 +3133,7 @@ function wizRenderStep() {
     '<div class="plate">плитка <b>' + (i + 1) + '</b></div>' +
     '<div class="move ' + (d > 0 ? 'dir-l' : 'dir-r') + '">' + (d > 0 ? WIZ_SVG_L : WIZ_SVG_R) + plateMoveLabel(d) + '</div>' +
     '<p class="wizmeta">штифт ' + wiz.sim[i] + ' → <b>' + (wiz.sim[i] + d) + '</b> · откатывать не нужно</p></div>' +
+    wizPrefillNote(wiz, c) +
     '<p class="wizpick">Кто дёрнулся вместе с плиткой <b>' + (i + 1) + '</b>?</p>' +
     '<div class="wizchips" id="wizChips">' + chips + '</div>' +
     '<div class="wizmovers" id="wizMovers">' + moversHtml + '</div>' +
@@ -3114,9 +3160,10 @@ function wizRenderDone() {
   wizHelpInline();
   document.getElementById('linkWizBody').innerHTML =
     '<p class="wizwhy">' + (left > 0
-      ? 'Плитки у стены заблокировали оставшиеся пробы. <b>Эти связи не записаны</b> - если решить замок сейчас, ход может удариться в стену. Отметь их в матрице вручную или сдвинь блокирующую плитку в игре и запусти мастер заново.'
+      ? 'Плитки у стены заблокировали оставшиеся пробы. <b>Эти связи не записаны или не сверены с игрой</b> - если решить замок сейчас, ход может удариться в стену. Отметь их в матрице вручную или сдвинь блокирующую плитку в игре и запусти мастер заново.'
       : 'Если что-то не сходится с игрой, поправь ячейки вручную или запусти мастер заново.') + '</p>' +
-    wizRenderPinsBar(LINK_WIZ.sim);
+    wizRenderPinsBar(LINK_WIZ.sim) +
+    '<p class="wizhelpnote"><b>Вернуть штифты</b> - если выйдешь из взлома в игре и зайдёшь снова: замок сбросится к исходным позициям. <b>Просто закрыть</b> - если продолжаешь с текущих позиций.</p>';
   document.getElementById('linkWizBody').classList.remove('dir-left');
   document.getElementById('linkWizFoot').innerHTML =
     '<div class="wizfoot-actions">' +
@@ -3130,13 +3177,15 @@ function wizRenderDone() {
 function openLinkWizard() {
   if (!pinsConfigured()) return;
   var resume = !!(WIZ_MEM.zero && WIZ_MEM.zero.length === N);
-  if (!resume) WIZ_MEM.zero = wizMk2d(false);
+  if (!resume) { WIZ_MEM.zero = wizMk2d(false); WIZ_MEM.unv = null; }
+  wizEnsureUnv();
   if (!WIZ_MEM.base || WIZ_MEM.base.length !== N) WIZ_MEM.base = pins.slice();
   LINK_WIZ = {
     sim: pins.slice(),
     cmd: null,
     step: 0,
     confirmedZero: WIZ_MEM.zero,
+    unverified: WIZ_MEM.unv,
     rows0: 0
   };
   LINK_WIZ.rows0 = wizRowsLeft(LINK_WIZ);
@@ -3382,10 +3431,11 @@ function solveNow() {
 
     if (SKIP_METRICS_ONCE) {
       SKIP_METRICS_ONCE = false;
+      PENDING_REPORT = null;
     } else {
       trackEvent('solve_ok');
       counterBump();
-      reportLockConfig();
+      PENDING_REPORT = captureLockReport();
     }
 
     SOL = { seq: seq, check: check, dt: dt };
@@ -3742,6 +3792,7 @@ function vpPostFeedback(vote, reasons, note) {
 
 function vpSubmitFeedback(vote) {
   vpApplyVote(vote);
+  if (vote === 'up') reportLockConfig(PENDING_REPORT);
   vpPostFeedback(vote, [], '');
   vpFlashThanks();
 }
@@ -4264,34 +4315,31 @@ var REPORTED_LOCKS = {};
 var SUGGESTED_CODE = null;
 var SUGGEST_CONFLICTS = 0;
 function pinsKeyOf(arr) { return N + '.' + arr.join(''); }
-function pinsKeyStr() { return pinsKeyOf(pins); }
 /* исходная расстановка замка: до того как помощник сдвинул штифты (wizSyncPins).
    WIZ_MEM.base снимается при открытии мастера и обнуляется при ручной правке. */
 function lockBasePins() {
   return (WIZ_MEM.base && WIZ_MEM.base.length === N) ? WIZ_MEM.base : pins;
 }
-function reportLockConfig() {
+/* Копилка: конфигурацию снимаем в момент решения, а отправляем только после
+   «Сайт помог? Да» - иначе неверно введённые связи попадают в подсказки другим. */
+var PENDING_REPORT = null;
+function captureLockReport() {
   try {
     var base = lockBasePins();
     /* канонический код замка = ИСХОДНЫЕ штифты + найденные связи, а не сдвинутое
        помощником состояние (иначе в каталог попадёт недорешённый замок). */
     var code = encodeConfig(base);
-    if (!code || REPORTED_LOCKS[code]) return;
-    if (code === SUGGESTED_CODE) return; /* связи из подсказки - не голосуем сами за себя */
-    REPORTED_LOCKS[code] = true;
-    /* индексируем фингерпринт под ОБЕ расстановки: исходную (до помощника) и
-       текущую (после того как помощник сдвинул штифты) - чтобы /suggest нашёл
-       замок по любой из них. Тэлли замка в каталоге считаем только один раз
-       (по исходной), вторую запись шлём как idxonly. */
-    var baseKey = pinsKeyOf(base);
-    var curKey = pinsKeyStr();
-    fetch(COUNTER_API + '/lock?code=' + encodeURIComponent(code) +
-      '&pins=' + encodeURIComponent(baseKey), { method: 'POST' }).catch(function () {});
-    if (curKey !== baseKey) {
-      fetch(COUNTER_API + '/lock?code=' + encodeURIComponent(code) +
-        '&pins=' + encodeURIComponent(curKey) + '&idxonly=1', { method: 'POST' }).catch(function () {});
-    }
-  } catch (e) {}
+    if (!code || code === SUGGESTED_CODE) return null; /* связи из подсказки - не голосуем сами за себя */
+    /* индекс /suggest - только по исходной расстановке: сдвинутые пробами
+       штифты могут совпасть с исходными чужого замка */
+    return { code: code, pins: pinsKeyOf(base) };
+  } catch (e) { return null; }
+}
+function reportLockConfig(rep) {
+  if (!rep || REPORTED_LOCKS[rep.code]) return;
+  REPORTED_LOCKS[rep.code] = true;
+  fetch(COUNTER_API + '/lock?code=' + encodeURIComponent(rep.code) +
+    '&pins=' + encodeURIComponent(rep.pins), { method: 'POST' }).catch(function () {});
 }
 
 /* Подсказка связей: если эту расстановку уже вскрывали, предлагаем матрицу */
@@ -4370,9 +4418,10 @@ function loadLockCounts() {
     })
     .catch(function () {});
 }
+/* только по ИСХОДНОЙ расстановке: сдвинутые пробами штифты одного замка могут
+   совпасть с исходными другого (Альберто 1211 -> 1311 = тронный зал Гомеза) */
 function knownLockFor() {
   var fps = {};
-  fps[pinsKeyStr()] = 1;
   fps[pinsKeyOf(lockBasePins())] = 1;
   for (var i = 0; i < KNOWN_LOCKS.length; i++)
     if (fps[KNOWN_LOCKS[i].fp])
@@ -4382,24 +4431,13 @@ function knownLockFor() {
       return { found: true, known: true, code: POPULAR_LOCKS[k].code, popular: true };
   return null;
 }
-/* сначала курируемый список (100%), затем поиск по копилке по ДВУМ расстановкам
-   (исходной и текущей) - берём вариант с наибольшим count. */
+/* сначала курируемый список, затем копилка - обе по исходной расстановке */
 function suggestLookup(cb) {
   var known = knownLockFor();
   if (known) { cb(known); return; }
-  var keys = [];
-  var bk = pinsKeyOf(lockBasePins());
-  var ck = pinsKeyStr();
-  keys.push(bk);
-  if (ck !== bk) keys.push(ck);
-  var best = null;
-  (function step(i) {
-    if (i >= keys.length) { cb(best); return; }
-    suggestFetch(keys[i]).then(function (d) {
-      if (d && d.found && (!best || d.count > best.count)) best = d;
-      step(i + 1);
-    });
-  })(0);
+  suggestFetch(pinsKeyOf(lockBasePins())).then(function (d) {
+    cb(d && d.found ? d : null);
+  });
 }
 /* подставляет связи из кода подсказки в неизвестные ячейки, сохраняя штифты
    пользователя, текущий N/FLIP и снимок WIZ_MEM.base. Возвращает число
@@ -4408,16 +4446,19 @@ function applySuggestedLinks(code) {
   var savedPins = pins.slice(), savedLink = link.map(function (r) { return r.slice(); }),
       savedFlip = FLIP, savedN = N, savedBase = WIZ_MEM.base,
       savedZero = WIZ_MEM.zero ? WIZ_MEM.zero.map(function (r) { return r.slice(); }) : null,
+      savedUnv = WIZ_MEM.unv,
       savedTouched = pinsTouched;
   if (!decodeConfig(code)) return -1;
   if (N !== savedN) {
     N = savedN; pins = savedPins; link = savedLink; pinsTouched = savedTouched;
-    WIZ_MEM.base = savedBase; WIZ_MEM.zero = savedZero; FLIP = savedFlip;
+    WIZ_MEM.base = savedBase; WIZ_MEM.zero = savedZero; WIZ_MEM.unv = savedUnv; FLIP = savedFlip;
     renderCount(); renderPins(); renderDeps();
     return -1;
   }
   var decodedLink = link.map(function (r) { return r.slice(); });
+  WIZ_MEM.unv = savedUnv;
   wizEnsureZero();
+  wizEnsureUnv();
   var applied = 0, filled = {}, conflicts = 0;
   for (var i = 0; i < N; i++) {
     for (var j = 0; j < N; j++) {
@@ -4431,6 +4472,7 @@ function applySuggestedLinks(code) {
       }
       savedLink[i][j] = v;
       WIZ_MEM.zero[i][j] = (v === 0);
+      WIZ_MEM.unv[i][j] = true; /* из подсказки - мастер сверит пробой */
       if (v !== 0) filled[i + ',' + j] = true;
       applied++;
     }
