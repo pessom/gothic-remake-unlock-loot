@@ -1,6 +1,9 @@
 import { readFileSync } from 'node:fs';
 import vm from 'node:vm';
 
+// пути к сайту - от корня репозитория, откуда бы ни запускали
+process.chdir(new URL('..', import.meta.url).pathname);
+
 function loadSolver(file) {
   const html = readFileSync(file, 'utf8');
   const m = html.match(/\/\* solver-start[\s\S]*?\/\* solver-end \*\//);
@@ -80,7 +83,7 @@ function randLock(rnd) {
 let seed = 1234567;
 const rnd = () => ((seed = (seed * 1103515245 + 12345) & 0x7fffffff) / 0x80000000);
 
-for (const file of ['index.html', 'en/index.html']) {
+for (const file of ['site/index.html', 'site/en/index.html']) {
   const solveLock = loadSolver(file);
 
   // тот же пример из мастера: [7,6,7,5,3]; 1->{3,4,5} opp, 2->3 opp, 3->1 opp.

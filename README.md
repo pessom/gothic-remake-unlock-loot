@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="og.png" alt="UnlockMyLoot - решатель замков Gothic 1 Remake" width="100%">
+<img src="site/og.png" alt="UnlockMyLoot - решатель замков Gothic 1 Remake" width="100%">
 
 # UnlockMyLoot
 
@@ -38,7 +38,7 @@ UnlockMyLoot перебирает все состояния замка и выд
 
 Мастер связей учитывает механику игры: если связанная плитка упёрлась бы в стену, весь ход не происходит; при блокировке у стены ищет обходной путь BFS по уже проверенным плиткам.
 
-Алгоритм проверен на реальных замках (включая [дверь у основания Разрушенной башни](https://unlockmyloot.com/?lock=aUkAACUBAAJikA) в Старом Лагере) и на тысячах случайных конфигураций — тесты `sol-test.mjs`, `wiz-test.mjs`, `link-test.mjs`, `suggest-test.mjs`.
+Алгоритм проверен на реальных замках (включая [дверь у основания Разрушенной башни](https://unlockmyloot.com/?lock=aUkAACUBAAJikA) в Старом Лагере) и на тысячах случайных конфигураций — тесты в папке `tests/`.
 
 ## API (Cloudflare Worker)
 
@@ -55,34 +55,42 @@ UnlockMyLoot перебирает все состояния замка и выд
 
 ## Устройство
 
-| Файл / папка | Назначение |
-| --- | --- |
-| `index.html`, `en/index.html` | Решатель (RU / EN): разметка, стили, UI, мастер связей |
-| `locks.yaml` | **Каталог замков** — единственный источник: подсказки в решателе, карточки каталога, страницы замков |
-| `tools/build-locks.mjs` | Генератор: `locks.yaml` → `locks/locks-data.js`, каталог, страницы замков, `sitemap.xml` |
-| `tools/templates/` | Шаблоны страниц каталога (RU / EN) |
-| `locks/lock-page.css`, `locks/lock-page.js` | Стили и фон страниц замков |
-| `counter-worker.js` | Cloudflare Worker: счётчик, копилка, аналитика, отзывы |
-| `wrangler.toml` | Конфиг воркера, KV, Durable Object, домен API |
-| `locks-research.md` | Внутренние заметки по замкам (не на сайте); то, что попадает на сайт, — в `locks.yaml` |
-| `sol-test.mjs`, `wiz-test.mjs`, … | Регрессионные тесты ядра и UI-логики |
-| `.github/workflows/pages.yml` | Деплой сайта на GitHub Pages |
-| `.github/workflows/purge-locks.yml` | Ручная очистка копилки `lk:` / `pi:` (admin) |
+```
+site/               корень сайта: публикуется целиком
+  index.html          решатель RU (разметка, стили, UI, мастер связей)
+  en/index.html       решатель EN
+  locks/              стили и фон страниц замков (lock-page.css/js)
+  404.html, robots.txt, иконки, og.png, CNAME
+locks.yaml          каталог замков - единственный источник списка
+tools/
+  build-locks.mjs     генератор: locks.yaml -> каталог, страницы замков, sitemap (в site/)
+  templates/          шаблоны страниц каталога RU / EN
+worker/             Cloudflare Worker: счётчик, копилка, аналитика, отзывы
+  counter-worker.js, wrangler.toml
+  scripts/            сводка воронки и сброс оценок (нужен STATS_SECRET)
+tests/              регрессионные тесты решателя, мастера, ссылок, подсказок
+docs/               внутренние заметки (locks-research.md), на сайт не попадают
+.github/workflows/  деплой сайта (pages.yml), воркера (worker.yml), очистка копилки (purge-locks.yml)
+```
+
+В `site/` собираемые файлы (`site/locks/*`, `site/en/locks/`, `site/sitemap.xml`) в git не хранятся: их создаёт `npm run build:locks`.
 
 Хостинг разнесён сознательно: статика на **GitHub Pages** (доступен без VPN в РФ), API — **Cloudflare Worker**. Если API недоступен, сайт молча показывает локальный fallback счётчика и работает дальше.
 
 Если основной домен не открывается, в подвале есть **зеркало** на jsDelivr (`gcore.jsdelivr.net`). Зеркало `1h8s.github.io` не подходит: GitHub Pages с кастомным доменом редиректит обратно на `unlockmyloot.com`. Зеркало отдаёт файлы прямо из git, поэтому собранного каталога там нет: решатель работает, но без подсказок по известным замкам.
 
-Каждый пуш в `main` собирает каталог из `locks.yaml` и деплоит сайт (GitHub Actions), а также воркер (Cloudflare Workers Builds). **Не менять** `id` KV в `wrangler.toml` — оттуда подтягивается значение счётчика при миграции.
+Каждый пуш в `main` собирает каталог из `locks.yaml` и деплоит сайт (GitHub Actions), а также воркер (Cloudflare Workers Builds, корневая папка — `worker/`). **Не менять** `id` KV в `worker/wrangler.toml` — оттуда подтягивается значение счётчика при миграции.
 
 ## Запуск локально
 
-Решатель работает без сборки (`open index.html`). Каталог, страницы замков и подсказки по известным замкам собираются из `locks.yaml`, в git их нет:
+Решатель работает без сборки (`open site/index.html`). Каталог, страницы замков и подсказки по известным замкам собираются из `locks.yaml`, в git их нет:
 
 ```bash
-npm install            # один раз: пакет yaml для генератора
-npm run build:locks    # собрать каталог из locks.yaml
-python3 -m http.server 8000
+npm install           # один раз: пакет yaml для генератора
+npm run serve         # собрать каталог и открыть сайт на http://localhost:8000
+# или по шагам:
+npm run build:locks   # собрать каталог из locks.yaml в site/
+python3 -m http.server 8000 -d site
 # тесты
 npm test
 ```

@@ -1,6 +1,9 @@
 import { readFileSync } from 'node:fs';
 import vm from 'node:vm';
 
+// пути к сайту - от корня репозитория, откуда бы ни запускали
+process.chdir(new URL('..', import.meta.url).pathname);
+
 function loadCodec(file) {
   const html = readFileSync(file, 'utf8');
   const grab = (re) => {
@@ -28,7 +31,7 @@ function loadCodec(file) {
 let seed = 777;
 const rnd = () => ((seed = (seed * 1103515245 + 12345) & 0x7fffffff) / 0x80000000);
 
-for (const file of ['index.html', 'en/index.html']) {
+for (const file of ['site/index.html', 'site/en/index.html']) {
   const ctx = loadCodec(file);
   let maxLen = 0;
   for (let t = 0; t < 2000; t++) {

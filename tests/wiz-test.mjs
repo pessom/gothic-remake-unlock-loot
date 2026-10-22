@@ -4,9 +4,12 @@
 // Иначе ход проходит и связанные съезжают на link[i][j]*d.
 import { readFileSync } from 'node:fs';
 import vm from 'node:vm';
+import { resolve } from 'node:path';
 
-const files = process.argv.slice(2);
-if (!files.length) files.push('index.html', 'en/index.html');
+// файлы из аргументов - относительно текущей папки, по умолчанию - сайт от корня репозитория
+const files = process.argv.slice(2).map((f) => resolve(f));
+process.chdir(new URL('..', import.meta.url).pathname);
+if (!files.length) files.push('site/index.html', 'site/en/index.html');
 
 function loadCore(file) {
   const html = readFileSync(file, 'utf8');

@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 /* Сборка каталога замков из locks.yaml (единственный источник списка замков).
-   Пишет (всё это не хранится в git, собирается при деплое):
+   Пишет в site/ (корень сайта; всё это не хранится в git, собирается при деплое):
    - locks/locks-data.js            - список для решателя (подсказка) и каталога
    - locks/<slug>/, en/locks/<slug>/ - страницы замков + редиректы со старых адресов
    - locks/index.html, en/locks/index.html - каталог из tools/templates/catalog.*.html
    - sitemap.xml
-   Число плиток, штифты, ходы и связи считаются по коду замка решателем из index.html.
+   Число плиток, штифты, ходы и связи считаются по коду замка решателем из site/index.html.
    Запуск: npm run build:locks */
 import { readFileSync, writeFileSync, mkdirSync, rmSync, readdirSync } from 'fs';
 import { join } from 'path';
@@ -13,6 +13,7 @@ import vm from 'vm';
 import YAML from 'yaml';
 
 const ROOT = new URL('..', import.meta.url).pathname;
+const SITE_DIR = join(ROOT, 'site'); /* корень сайта - выкладывается целиком */
 const SITE = 'https://unlockmyloot.com';
 const ASSET_V = 'scroll-bg-20260617-2'; /* сброс кэша lock-page.css/js - менять вместе с ними */
 const LANGS = ['ru', 'en'];
@@ -22,9 +23,9 @@ const LOCKS = YAML.parse(readFileSync(join(ROOT, 'locks.yaml'), 'utf8'));
 
 /* решатель берём из index.html, чтобы ходы в каталоге совпадали с сайтом */
 function loadSolver() {
-  const html = readFileSync(join(ROOT, 'index.html'), 'utf8');
+  const html = readFileSync(join(SITE_DIR, 'index.html'), 'utf8');
   const m = html.match(/\/\* solver-start[\s\S]*?\/\* solver-end \*\//);
-  if (!m) throw new Error('index.html: не найдены маркеры solver-start/solver-end');
+  if (!m) throw new Error('site/index.html: не найдены маркеры solver-start/solver-end');
   const ctx = {};
   vm.createContext(ctx);
   vm.runInContext(m[0] + '; this.solveLock = solveLock;', ctx);
@@ -329,7 +330,7 @@ function dataJs() {
 
 /* ---------- запись ---------- */
 for (const lang of LANGS) {
-  const dir = join(ROOT, prefix(lang).slice(1), 'locks');
+  const dir = join(SITE_DIR, prefix(lang).slice(1), 'locks');
   mkdirSync(dir, { recursive: true }); /* en/locks/ целиком собираемая - в чистом клоне её нет */
   /* каждая подпапка locks/ - сгенерированная страница: чистим, чтобы удалённые замки не оставались */
   for (const e of readdirSync(dir, { withFileTypes: true })) if (e.isDirectory()) rmSync(join(dir, e.name), { recursive: true });
@@ -344,8 +345,8 @@ for (const lang of LANGS) {
   }
   writeFileSync(join(dir, 'index.html'), catalogHtml(lang));
 }
-writeFileSync(join(ROOT, 'locks/locks-data.js'), dataJs());
-writeFileSync(join(ROOT, 'sitemap.xml'), sitemapXml());
+writeFileSync(join(SITE_DIR, 'locks/locks-data.js'), dataJs());
+writeFileSync(join(SITE_DIR, 'sitemap.xml'), sitemapXml());
 
 const pages = LOCKS.filter((L) => L.slug).length;
 console.log(`locks.yaml: ${LOCKS.length} замков, ${pages} страниц (x2 языка), ${LOCKS.filter((L) => L.aliases).length} редиректов - готово`);
