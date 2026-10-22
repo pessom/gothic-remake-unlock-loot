@@ -1,0 +1,8 @@
+node_modules/
+
+# Собирается из locks.yaml (npm run build:locks), в CI - при каждом деплое
+/locks/locks-data.js
+/locks/index.html
+/locks/*/
+/en/locks/
+/sitemap.xml

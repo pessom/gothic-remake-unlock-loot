@@ -1,0 +1,13 @@
+{
+  "name": "unlockmyloot",
+  "private": true,
+  "type": "module",
+  "description": "Решатель замков Gothic 1 Remake. Сам сайт - статика без сборки; npm нужен только генератору каталога замков.",
+  "scripts": {
+    "build:locks": "node tools/build-locks.mjs",
+    "test": "node sol-test.mjs && node wiz-test.mjs && node link-test.mjs && node suggest-test.mjs"
+  },
+  "devDependencies": {
+    "yaml": "2.6.1"
+  }
+}

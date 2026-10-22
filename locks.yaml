@@ -1,0 +1,1298 @@
+# Каталог замков UnlockMyLoot - единственный источник списка замков.
+# Отсюда собираются (npm run build:locks, в CI - при каждом деплое):
+#   - подсказка связей в решателе (по совпадению стартовых штифтов);
+#   - карточки каталога /locks/ и /en/locks/;
+#   - страницы замков /locks/<slug>/ и /en/locks/<slug>/, sitemap.xml.
+# Число плиток, штифты, ходы и связи считаются автоматически по коду замка.
+#
+# Поля замка:
+#   code      код из ссылки ?lock=... (обязательно)
+#   slug      адрес страницы замка; без slug - только карточка в каталоге
+#   aliases   старые адреса страницы - с них будет редирект на slug
+#   suggest   false - не подсказывать связи в решателе по штифтам
+#   credit    кто прислал конфигурацию: url (необязательно), ru/en: label (подпись на странице), by (имя)
+#   ru / en   тексты на двух языках:
+#     name      название на карточке и в подсказке решателя (обязательно)
+#     pageName  название в «хлебных крошках» страницы, если отличается от name
+#     card      описание на карточке каталога (обязательно)
+#     title, desc, lead, where, inside, faq (список {q, a}) - страница замка (обязательны при slug)
+# В текстах можно HTML (ссылки <a href>). Двойные кавычки в title/desc/card - нельзя, используй «ёлочки».
+# Порядок замков = порядок карточек в каталоге.
+
+- code: aUkAACUBAAJikA
+  slug: ruined-tower-door
+  ru:
+    name: Дверь Разрушенной башни
+    card: Дверь у основания Разрушенной башни рядом со Старым лагерем
+    title: Как открыть дверь Разрушенной башни в Gothic 1 Remake
+    desc: "Дверь стоит у основания Разрушенной башни недалеко от Старого лагеря. За дверью - склеп с трупом и сундуком: добротное снаряжение для раннего этапа. Параметры: 6 плиток, 57 ходов, 10 связей. Открой без сломанных отмычек."
+    lead: "Дверь у основания Разрушенной башни  -  один из длиннейших замков раннего прохождения: 57 ходов и 6 плиток. В старых гайдах встречался ошибочный код без стартовых штифтов; здесь полная проверенная конфигурация, сверенная с игрой."
+    where: "Выходишь к башне по тропе мимо Старого лагеря. За дверью  -  склеп с трупом и сундуком: добротное снаряжение, которое многие ищут по запросу «дверь разрушенной башни Gothic Remake»."
+    inside: Склеп с трупом и сундуком  -  снаряжение для раннего этапа. У этого замка плитка 5 имеет четыре исходящие связи; именно на нём в решателе ловили баг BFS-помощника.
+    faq:
+      - q: Почему в старых гайдах другой код?
+        a: Популярный код <code>YHayiAREIAIABE</code> (45 ходов, другие штифты) оказался неверным для этой двери. Актуальная конфигурация  -  <code>aUkAACUBAAJikA</code>, 57 ходов.
+      - q: Сколько ходов нужно?
+        a: Кратчайший безопасный путь  -  57 ходов (6 плиток, 10 связей). Решатель показывает их по шагам.
+      - q: Что если позиции штифтов не совпадают?
+        a: Значит у тебя другой экземпляр замка. Введи свои штифты в решателе  -  он найдёт путь для твоей расстановки.
+  en:
+    name: Ruined Tower door
+    card: Door at the base of the Ruined Tower near the Old Camp
+    title: How to open the Ruined Tower door in Gothic 1 Remake
+    desc: "The door is at the base of the Ruined Tower near the Old Camp. Behind it lies a crypt with a body and a chest holding solid early-game gear. Stats: 6 plates, 57 moves, 10 links. Open it without breaking lockpicks."
+    lead: "The door at the base of the Ruined Tower is one of the longest early-game locks: 57 moves across 6 plates. Old guides often listed the wrong code without pin positions; this page has the full verified configuration from in-game checks."
+    where: Follow the trail past the Old Camp to the tower base. Behind the door is a crypt with a corpse and chest  -  solid early gear that players search for as "Ruined Tower door Gothic Remake".
+    inside: A crypt with a corpse and chest  -  early-game equipment. Plate 5 has four outgoing links; this is the lock where the solver's BFS helper bug was first caught.
+    faq:
+      - q: Why do old guides show a different code?
+        a: The popular code <code>YHayiAREIAIABE</code> (45 moves, different pins) turned out wrong for this door. The correct config is <code>aUkAACUBAAJikA</code>, 57 moves.
+      - q: How many moves?
+        a: The shortest safe path is 57 moves (6 plates, 10 links). The solver shows them step by step.
+      - q: What if my pin positions differ?
+        a: You have a different lock instance. Enter your pins in the solver  -  it will find a path for your layout.
+- code: SojAgCBDQA
+  slug: scatty-chest
+  aliases:
+    - sketty-chest
+  ru:
+    name: Сундук Скатти
+    card: Сундук Скатти с кольцом для Фингерса - квест «Кольцо для Фингерса»
+    title: Как открыть сундук Скатти в Gothic 1 Remake
+    desc: "Сундук Скатти находится в Старом лагере. Внутри кольцо, которое нужно отдать Фингерсу по одноимённому квесту. Параметры: 5 плиток, 31 ход, 6 связей. Открой без сломанных отмычек."
+    lead: Самый знаменитый замок Gothic  -  сундук Скатти с кольцом для квеста «Кольцо для Фингерса». Старые walkthrough'ы давали ~29 нажатий без стартовых штифтов и связей; здесь полная конфигурация на 31 ход.
+    where: Сундук Скатти в Старом лагере. Скатти  -  теневик; сундук завязан на квест «Кольцо для Фингерса», который выдаёт Фингерс.
+    inside: Кольцо, которое нужно отдать Фингерсу. Без него квест не продвинется  -  поэтому этот замок один из самых частых в поиске.
+    faq:
+      - q: Почему в гайдах только ~29 нажатий?
+        a: Старые walkthrough'ы давали последовательность кликов без стартовых позиций штифтов и связей между плитками. Полная конфигурация  -  31 ход при 5 плитках.
+      - q: Это сундук у Фингерса?
+        a: Да  -  кольцо для одноимённого квеста. Скатти живёт в Старом лагере, сундук привязан к заданию Фингерса.
+      - q: Сколько ходов нужно?
+        a: Кратчайший безопасный путь  -  31 ход (5 плиток, 6 связей).
+  en:
+    name: Scatty's chest
+    card: The chest with the ring for Fingers - the 'A Ring for Fingers' quest
+    title: How to open Scatty's chest in Gothic 1 Remake
+    desc: "Scatty's chest is in the Old Camp. Inside is the ring you hand to Fingers for that quest. Stats: 5 plates, 31 moves, 6 links. Open it without breaking lockpicks."
+    lead: The most famous lock in Gothic  -  Scatty's chest with the ring for the "A Ring for Fingers" quest. Old walkthroughs listed ~29 clicks without starting pin positions or links; this page has the full 31-move configuration.
+    where: Scatty's chest in the Old Camp. Scatty is a shadow; the chest is tied to Fingers' "A Ring for Fingers" quest.
+    inside: The ring you must deliver to Fingers. Without it the quest cannot progress  -  which is why this lock tops search results.
+    faq:
+      - q: Why do guides only list ~29 clicks?
+        a: Old walkthroughs gave a click sequence without starting pin positions or plate links. The full config is 31 moves across 5 plates.
+      - q: Is this Fingers' quest chest?
+        a: Yes  -  the ring for the same-named quest. Scatty lives in the Old Camp; the chest is tied to Fingers' assignment.
+      - q: How many moves?
+        a: The shortest safe path is 31 moves (5 plates, 6 links).
+- code: LagFFgA
+  slug: cor-galom-chest
+  ru:
+    name: Сундук Кор Галома
+    card: Рецепт для квеста Декстера - между лабораторными столами на первом этаже
+    title: Как открыть сундук Кор Галома в Gothic 1 Remake
+    desc: "Сундук Кор Галома. Внутри рецепт сектантов, нужный для квеста. Параметры: 4 плитки, 15 ходов, 5 связей. Открой без сломанных отмычек."
+    lead: Самый короткий замок каталога - всего 15 ходов. Сундук с рецептом для квеста Декстера стоит между лабораторными столами в лаборатории Кор Галома.
+    where: Между лабораторными столами на первом этаже лаборатории Кор Галома в Болотном лагере. Это сундук с рецептом - не путать со сундуком в спальне на втором этаже.
+    inside: Рецепт сектантов, нужный для квеста Декстера. Без него сюжет Болотного лагеря не сдвинется.
+    faq:
+      - q: Нужен ли квест Декстера?
+        a: "Да - рецепт внутри нужен для квеста Декстера. Сам замок короткий: 15 ходов, 4 плитки, 5 связей."
+      - q: Это не сундук в спальне на втором этаже?
+        a: Нет. Рецепт лежит в сундуке между столами на первом этаже (<code>LagFFgA</code>). В спальне на втором этаже - другой замок с кольцом очищения и лутом.
+      - q: Сколько ходов?
+        a: 15 ходов - рекорд каталога по краткости.
+  en:
+    name: Cor Galom's chest
+    card: Recipe for Dexter's quest - between laboratory tables on the ground floor
+    title: How to open Cor Galom's chest in Gothic 1 Remake
+    desc: "Cor Galom's chest is in the Swamp Camp lab. Inside is the cultists' recipe needed for the quest. Stats: 4 plates, 15 moves, 5 links. Open it without breaking lockpicks."
+    lead: The shortest lock in the catalog - just 15 moves. The recipe chest between laboratory tables in Cor Galom's lab holds the item for Dexter's quest.
+    where: Between the laboratory tables on the ground floor of Cor Galom's lab in the Swamp Camp. This is the recipe chest - not the bedroom chest on the second floor.
+    inside: The sectarians' recipe required for Dexter's quest. Without it the Swamp Camp storyline won't advance.
+    faq:
+      - q: Do I need Dexter's quest?
+        a: "Yes - the recipe inside is for Dexter's quest. The lock itself is short: 15 moves, 4 plates, 5 links."
+      - q: Is this the second-floor bedroom chest?
+        a: No. The recipe is in the chest between tables on the ground floor (<code>LagFFgA</code>). The bedroom upstairs has a different lock with a purification ring and other loot.
+      - q: How many moves?
+        a: 15 moves - the catalog's shortest record.
+- code: a2YMQAAIiECEAA
+  slug: cor-galom-bedroom-chest
+  ru:
+    name: Сундук в спальне Кор Галома
+    card: Спальня на втором этаже - кольцо очищения, свиток пиромантии и алхимический лут
+    title: Как открыть сундук в спальне Кор Галома в Gothic 1 Remake
+    desc: Сундук в спальне Кор Галома на втором этаже лаборатории. Внутри кольцо очищения, свиток пиромантии и алхимический лут. 6 плиток, 60 ходов, 7 связей.
+    lead: Сундук в спальне на втором этаже лаборатории Кор Галома - там, где он спит. 60 ходов, 6 плиток; внутри кольцо очищения и алхимический лут. Не путать со сундуком с рецептом между столами внизу.
+    where: Второй этаж лаборатории Кор Галома в Болотном лагере - спальня, где спит Кор Галом. Рецепт для квеста Декстера лежит в другом сундуке между лабораторными столами на первом этаже.
+    inside: Кольцо очищения (защита от огня +5, от ветра +3, от льда +3, от энергии +3), свиток пиромантии, 3 серы, 3 тёмных цветка, 2 флакона и изваяние.
+    faq:
+      - q: Это сундук с рецептом для Декстера?
+        a: Нет. Рецепт - в сундуке между лабораторными столами на первом этаже (<code>LagFFgA</code>, 15 ходов). Этот сундук в спальне - отдельный замок с кольцом и алхимией.
+      - q: Что даёт кольцо очищения?
+        a: Защита от огня +5, от ветра +3, от льда +3, от энергии +3.
+      - q: Сколько ходов?
+        a: 60 ходов (6 плиток, 7 связей). Решатель показывает путь по шагам.
+  en:
+    name: Cor Galom's bedroom chest
+    card: Second-floor bedroom - purification ring, pyromancy scroll, and alchemy loot
+    title: How to open Cor Galom's bedroom chest in Gothic 1 Remake
+    desc: Chest in Cor Galom's bedroom on the second floor of his laboratory. Purification ring, pyromancy scroll, and alchemy loot inside. 6 plates, 60 moves, 7 links.
+    lead: The chest in Cor Galom's bedroom on the second floor of his laboratory - where he sleeps. 60 moves across 6 plates; inside are a purification ring and alchemy loot. Not the recipe chest between the tables downstairs.
+    where: Second floor of Cor Galom's laboratory in the Swamp Camp - his bedroom where he sleeps. The recipe for Dexter's quest is in a different chest between the laboratory tables on the ground floor.
+    inside: Purification ring (fire protection +5, wind +3, ice +3, energy +3), pyromancy scroll, 3 brimstones, 3 dark flowers, 2 flasks, and a figurine.
+    faq:
+      - q: Is this the recipe chest for Dexter's quest?
+        a: No. The recipe is in the chest between laboratory tables on the ground floor (<code>LagFFgA</code>, 15 moves). This bedroom chest is a separate lock with a ring and alchemy items.
+      - q: What does the purification ring give?
+        a: Fire protection +5, wind +3, ice +3, energy +3.
+      - q: How many moves?
+        a: 60 moves (6 plates, 7 links). The solver shows the path step by step.
+- code: YQY0gBgAAGACIE
+  slug: swamp-camp-forge-chest
+  ru:
+    name: Сундук в кузнице Болотного лагеря
+    card: Кузница Болотного лагеря - одноручный топор на 29 урона и материалы
+    title: Как открыть сундук в кузнице Болотного лагеря в Gothic 1 Remake
+    desc: "Сундук в кузнице Болотного лагеря. Внутри одноручный топор на 29 урона и кузнечные материалы. Параметры: 6 плиток, 41 ход, 8 связей."
+    lead: "Сундук в кузнице Болотного лагеря: 41 ход и 6 плиток. Внутри одноручный топор на 29 урона (рассечением) и пачка кузнечных материалов - сталь, дуб, кожа, железо и ива."
+    where: Кузница в Болотном лагере - сундук стоит прямо в кузнечной. Это не сундуки лаборатории Кор Галома и не кладовые Нового лагеря.
+    inside: Одноручный топор - 29 урона рассечением, требует 23 силы. Плюс 2 стали, 3 древесины дуба, 3 полоски кожи, 3 железа и 4 древесины ивы.
+    faq:
+      - q: Какой топор внутри?
+        a: Одноручный топор на 29 урона рассечением. Чтобы экипировать, нужно 23 силы.
+      - q: Где кузница в Болотном лагере?
+        a: В самом Болотном лагере - отдельное здание кузницы, не лаборатория Кор Галома.
+      - q: Сколько ходов?
+        a: 41 ход (6 плиток, 8 связей). Решатель показывает путь по шагам.
+  en:
+    name: Swamp Camp forge chest
+    card: Swamp Camp forge - one-handed axe with 29 slash damage and materials
+    title: How to open the Swamp Camp forge chest in Gothic 1 Remake
+    desc: "Chest in the Swamp Camp forge. One-handed axe with 29 slash damage and smithing materials inside. Stats: 6 plates, 41 moves, 8 links."
+    lead: "The chest in the Swamp Camp forge: 41 moves across 6 plates. Inside are a one-handed axe with 29 slash damage and a bundle of smithing materials - steel, oak, leather, iron, and willow wood."
+    where: The forge in the Swamp Camp - the chest sits right in the smithy. Not the Cor Galom laboratory chests or New Camp storerooms.
+    inside: A one-handed axe - 29 slash damage, requires 23 Strength. Plus 2 steel, 3 oak wood, 3 leather strips, 3 iron, and 4 willow wood.
+    faq:
+      - q: What axe is inside?
+        a: A one-handed axe with 29 slash damage. You need 23 Strength to equip it.
+      - q: Where is the forge in the Swamp Camp?
+        a: In the Swamp Camp itself - a separate forge building, not Cor Galom's laboratory.
+      - q: How many moves?
+        a: 41 moves (6 plates, 8 links). The solver shows the path step by step.
+- code: RY2VUBQAiA
+  slug: rice-lord-storeroom
+  ru:
+    name: Склад Рисового лорда (3-й этаж)
+    card: Дверь на 3-м этаже над рисовыми полями - на 2-м другой замок
+    title: Как открыть склад Рисового лорда в Gothic 1 Remake
+    desc: "Дверь на 3-м этаже склада над рисовыми полями Нового лагеря. За дверью - склад с припасами и лутом. Параметры: 5 плиток, 30 ходов, 9 связей. Открой без сломанных отмычек."
+    lead: "Склад на 3-м этаже над рисовыми полями Нового лагеря. Гайды Game8 и rutab предупреждают: на 2-м этаже той же постройки  -  другой замок, не путай."
+    where: Постройка Рисового лорда над рисовыми полями Нового лагеря. Эта дверь  -  на 3-м этаже (склад). На 2-м этаже стоит отдельный замок с другой конфигурацией.
+    inside: Склад с припасами и лутом. Открывается ключом Рисового лорда или отмычкой.
+    faq:
+      - q: Чем отличается от замка на 2-м этаже?
+        a: "В одной постройке два замка: на 2-м этаже  -  другой конфиг, этот  -  склад на 3-м. Гайды по рисовым полям часто путают эти двери."
+      - q: Как попасть на склад?
+        a: Ключ Рисового лорда или отмычка. Рисовый лорд  -  НПЦ Нового лагеря, надзирает за полями.
+      - q: Сколько ходов?
+        a: 30 ходов (5 плиток, 9 связей).
+  en:
+    name: Rice Lord's storeroom (3rd floor)
+    card: 3rd-floor door above the rice fields - 2nd floor has a different lock
+    title: How to open the Rice Lord's storeroom in Gothic 1 Remake
+    desc: "Door on the 3rd floor of the storeroom above the New Camp rice fields. Behind it is a storeroom with supplies and loot. Stats: 5 plates, 30 moves, 9 links. Open it without breaking lockpicks."
+    lead: "The storeroom on the 3rd floor above the New Camp rice fields. Game8 and rutab guides warn: the 2nd floor of the same building has a different lock  -  don't mix them up."
+    where: The Rice Lord's building above the New Camp rice fields. This door is on the 3rd floor (storeroom). The 2nd floor has a separate lock with a different configuration.
+    inside: A storeroom with supplies and loot. Opens with the Rice Lord's key or a lockpick.
+    faq:
+      - q: How is this different from the 2nd-floor lock?
+        a: "One building, two locks: the 2nd floor has a different config; this one is the 3rd-floor storeroom. Rice-field guides often confuse these doors."
+      - q: How do I reach the storeroom?
+        a: Rice Lord's key or a lockpick. The Rice Lord is a New Camp NPC overseeing the fields.
+      - q: How many moves?
+        a: 30 moves (5 plates, 9 links).
+- code: YiNAIJpEEAiAAA
+  slug: gomez-chambers-door
+  ru:
+    name: Дверь в покои Гомеза
+    card: Дверь в покои Гомеза в замке Старого лагеря
+    title: Как открыть дверь в покои Гомеза в Gothic 1 Remake
+    desc: Дверь в покои Гомеза в замке Старого лагеря. 6 плиток, 28 ходов, 10 связей.
+    lead: Дверь в покои Гомеза в замке Старого лагеря - 28 ходов и 6 плиток. Путь к комнате босса и сундукам вокруг неё.
+    where: Замок Старого лагеря - дверь в покои Гомеза. За ней комната босса, сундук у кровати, комната Ворона справа и <a href="/locks/arto-room-door/">комната Арто</a> слева.
+    inside: Доступ в покои Гомеза - к сундуку у кровати, сундуку у стены, двери в комнату Ворона, двери в комнату Арто и <a href="/locks/gomez-bedrooms-door/">двери на этаже спален</a>.
+    faq:
+      - q: Это не сундук у кровати?
+        a: Нет. Сундук в ногах Гомеза - отдельный замок (<code>SgjQQDUgCI</code>, 68 ходов). Это дверь в покои.
+      - q: Сколько ходов?
+        a: 28 ходов (6 плиток, 10 связей).
+  en:
+    name: Door to Gomez's chambers
+    card: Door to Gomez's chambers in the Old Camp castle
+    title: How to open the door to Gomez's chambers in Gothic 1 Remake
+    desc: Door to Gomez's chambers in the Old Camp castle. 6 plates, 28 moves, 10 links.
+    lead: The door to Gomez's chambers in the Old Camp castle - 28 moves across 6 plates. The path to the boss room and the chests around it.
+    where: "Old Camp castle - door to Gomez's chambers. Beyond it: the boss room, bedside chest, Voran's room on the right, and <a href=\"/en/locks/arto-room-door/\">Arto's room</a> on the left."
+    inside: Access to Gomez's chambers - the bedside chest, wall chest, door to Voran's room, door to Arto's room, and the <a href="/en/locks/gomez-bedrooms-door/">door on the bedrooms floor</a>.
+    faq:
+      - q: Isn't this the bedside chest?
+        a: No. The chest at Gomez's feet is a separate lock (<code>SgjQQDUgCI</code>, 68 moves). This is the chamber door.
+      - q: How many moves?
+        a: 28 moves (6 plates, 10 links).
+- code: IIAKWgA
+  slug: gomez-throne-hall-chest
+  ru:
+    name: Сундук в тронном зале у Гомеза
+    card: Справа от Гомеза - чертёж королевского оружия, кража не считается
+    title: Как открыть сундук в тронном зале у Гомеза в Gothic 1 Remake
+    desc: Сундук справа от Гомеза в тронном зале замка. Чертёж королевского оружия, рубины. 16 ходов, кража не считается.
+    lead: Сундук справа от Гомеза в тронном зале Старого лагеря. Всего 16 ходов - короткий замок; внутри чертёж королевского оружия и рубины. Можно взламывать спокойно - за кражу не считается.
+    where: Тронный зал замка Старого лагеря - сундук стоит справа от Гомеза на троне. Не путать с <a href="/locks/gomez-chambers-door/">дверью в покои</a> и <a href="/locks/gomez-bedside-chest/">сундуком у кровати</a> в спальне.
+    inside: Чертёж королевского оружия, 42 руды, 2 рубина, кубок.
+    faq:
+      - q: Это кража?
+        a: Нет - этот сундук можно взламывать спокойно, за кражу не считается.
+      - q: Это сундук в покоях?
+        a: Нет. Покои Гомеза - за отдельной дверью (<a href="/locks/gomez-chambers-door/">дверь в покои</a>). Этот сундук в тронном зале, рядом с боссом.
+      - q: Сколько ходов?
+        a: 16 ходов (4 плитки, 6 связей) - один из коротких в каталоге.
+  en:
+    name: Chest in Gomez's throne hall
+    card: To Gomez's right - Royal Weapon blueprint, safe to pick
+    title: How to open the chest in Gomez's throne hall in Gothic 1 Remake
+    desc: Chest to Gomez's right in the castle throne hall. Royal Weapon blueprint, rubies. 16 moves, picking it doesn't count as theft.
+    lead: Chest to Gomez's right in the Old Camp throne hall. Only 16 moves - a short lock; Royal Weapon blueprint and rubies inside. Safe to pick - doesn't count as theft.
+    where: Throne hall of the Old Camp castle - chest stands to Gomez's right on the throne. Not the <a href="/en/locks/gomez-chambers-door/">chamber door</a> or <a href="/en/locks/gomez-bedside-chest/">bedside chest</a> in his bedroom.
+    inside: Royal Weapon blueprint, 42 ore, 2 rubies, goblet.
+    faq:
+      - q: Does this count as theft?
+        a: No - you can pick this chest safely; it doesn't count as theft.
+      - q: Is this the chamber chest?
+        a: No. Gomez's chambers are behind a separate door (<a href="/en/locks/gomez-chambers-door/">chamber door</a>). This chest is in the throne hall next to the boss.
+      - q: How many moves?
+        a: 16 moves (4 plates, 6 links) - one of the shorter locks in the catalog.
+- code: YMTCAKIgIEBiAA
+  slug: old-camp-dungeon-door
+  ru:
+    name: Дверь в темнице с расстрелянным призраком
+    card: Вход в темницу под замком - расстрелянный призрак, квест Арлин
+    title: Как открыть дверь в темнице с расстрелянным призраком в Gothic 1 Remake
+    desc: Дверь в темнице под замком Старого лагеря - у расстрелянного призрака. Квест «Перекрыть правду», Арлин. 68 ходов.
+    lead: "Дверь в темницу под замком Старого лагеря - ориентир: рядом висит расстрелянный призрак. 68 ходов; вход в темницу для квеста «Перекрыть правду» и камер заключённых."
+    where: 'Замок Старого лагеря, темница под замком. Пройти мимо Торуса у ворот, направо до конца коридора, спуститься по лестнице - дверь внизу. Ориентир: расстрелянный призрак у входа в темницу. Не путать с <a href="/locks/gomez-chambers-door/">дверью в покои Гомеза</a> и <a href="/locks/arlin-dungeon-key/">ключом от темницы Арлина</a> дальше внутри.'
+    inside: Доступ в темницу - камеры заключённых. Здесь сидит Арлин (квест «Перекрыть правду» / лагерь разбойников); позже - камеры сюжета со Стоуном.
+    faq:
+      - q: Это дверь камеры Арлина?
+        a: Нет. Это вход в зону темницы. Камера Арлина - дальше; там <a href="/locks/arlin-dungeon-key/">ключ от темницы Арлина</a> или взлом (25 ходов).
+      - q: Зачем взламывать?
+        a: Квест «Перекрыть правду» от Браннока. Можно открыть ключом от темницы Гомеза, но взлом тоже работает.
+      - q: Сколько ходов?
+        a: 68 ходов (6 плиток, 10 связей). Вторая плитка уже в центре.
+  en:
+    name: Dungeon door by the executed ghost
+    card: Dungeon entrance below castle - executed ghost, Arlin quest
+    title: How to open the dungeon door by the executed ghost in Gothic 1 Remake
+    desc: Dungeon door under the Old Camp castle - by the executed ghost. Bar the Truth quest, Arlin. 68 moves.
+    lead: "Door to the dungeon beneath the Old Camp castle - landmark: an executed ghost hanging nearby. 68 moves; entrance to the dungeon for Bar the Truth and the prison cells."
+    where: "Old Camp castle dungeons below the keep. Pass Thorus at the gate, go right to the end of the corridor, climb down the ladder - door at the bottom. Landmark: executed ghost by the dungeon entrance. Not the <a href=\"/en/locks/gomez-chambers-door/\">chamber door</a> or <a href=\"/en/locks/arlin-dungeon-key/\">Arlin's dungeon key</a> further inside."
+    inside: Access to the dungeon cells. Arlin is held here (Bar the Truth); later, story cells with Stone.
+    faq:
+      - q: Is this Arlin's cell door?
+        a: No. This is the dungeon entrance. Arlin's cell is further in - <a href="/en/locks/arlin-dungeon-key/">Arlin's dungeon key</a> or lockpicking (25 moves).
+      - q: Why pick it?
+        a: Bar the Truth from Brannok. Gomez's dungeon key also works, but lockpicking is fine.
+      - q: How many moves?
+        a: 68 moves (6 plates, 10 links). Plate 2 is already centred.
+- code: gBDXAECQhAAQAQAIRAA
+  slug: arlin-dungeon-key
+  ru:
+    name: Ключ от темницы Арлина
+    card: Камера Арлина в темнице - ключ у стражника или взлом
+    title: Как открыть ключ от темницы Арлина в Gothic 1 Remake
+    desc: Ключ от темницы Арлина в замке Старого лагеря - камера в подземелье, квест «Перекрыть правду». 7 плиток, 25 ходов.
+    lead: Ключ от темницы Арлина - замок в темнице под замком, у камеры Арлина. 25 ходов, 7 плиток; для квеста «Перекрыть правду» можно взять ключ у стражника или взломать.
+    where: Темница под замком Старого лагеря - после <a href="/locks/old-camp-dungeon-door/">двери с расстрелянным призраком</a>. Ключ у стражника у камер или взлом этой двери вместо ключа.
+    inside: Открывает доступ к камере Арлина - квест «Перекрыть правду» (лагерь разбойников).
+    faq:
+      - q: Это не вход в темницу?
+        a: Нет. Вход - <a href="/locks/old-camp-dungeon-door/">дверь с расстрелянным призраком</a> (68 ходов). Это замок у камеры Арлина внутри.
+      - q: Нужен ли ключ?
+        a: Можно выбить у стражника рядом с камерами. Или взломать - 25 ходов, короче входной двери.
+      - q: Сколько ходов?
+        a: 25 ходов (7 плиток, 10 связей).
+  en:
+    name: Arlin's dungeon key
+    card: Arlin's cell in the dungeon - warder key or lockpick
+    title: How to open Arlin's dungeon key lock in Gothic 1 Remake
+    desc: Arlin's dungeon key in the Old Camp castle - cell in the dungeon, Bar the Truth quest. 7 plates, 25 moves.
+    lead: Arlin's dungeon key - lock in the dungeon under the castle, at Arlin's cell. 25 moves, 7 plates; for Bar the Truth you can take the key from the warder or pick the lock.
+    where: Dungeon beneath the Old Camp castle - after the <a href="/en/locks/old-camp-dungeon-door/">door by the executed ghost</a>. Key on the warder by the cells, or pick this lock instead.
+    inside: Opens access to Arlin's cell - Bar the Truth quest (Rogues' Camp).
+    faq:
+      - q: Isn't this the dungeon entrance?
+        a: No. The entrance is the <a href="/en/locks/old-camp-dungeon-door/">door by the executed ghost</a> (68 moves). This lock is at Arlin's cell inside.
+      - q: Do I need the key?
+        a: You can loot it from the warder by the cells. Or pick the lock - 25 moves, shorter than the entrance door.
+      - q: How many moves?
+        a: 25 moves (7 plates, 10 links).
+- code: bI02qgAAIBgEAg
+  slug: gomez-wine-cellar
+  ru:
+    name: Винный погреб Гомеза
+    card: Склад под Гомезом - дверь внизу вертикальной лестницы
+    title: Как открыть винный погреб Гомеза в Gothic 1 Remake
+    desc: Склад под Гомезом в замке Старого лагеря - винный погреб за дверью внизу вертикальной лестницы. 6 плиток, 31 ход.
+    lead: Винный погреб Гомеза - склад под замком, дверь внизу вертикальной лестницы (как подвал). 31 ход, 6 плиток; не путать с темницей и тронным залом.
+    where: Замок Старого лагеря, уровень под Гомезом. Спуститься по вертикальной лестнице вниз - дверь в конце. Это склад / винный погреб, не <a href="/locks/old-camp-dungeon-door/">темница с призраком</a> (другой путь) и не <a href="/locks/gomez-throne-hall-chest/">тронный зал</a>.
+    inside: Винный погреб - вино и запасы в складе под замком.
+    faq:
+      - q: Это темница?
+        a: Нет. Темница - через коридор к <a href="/locks/old-camp-dungeon-door/">двери с расстрелянным призраком</a> (68 ходов). Погреб - вертикальная лестница под Гомезом.
+      - q: Где лестница?
+        a: В замке Старого лагеря, спуск вниз к складу под Гомезом - дверь внизу лестницы.
+      - q: Сколько ходов?
+        a: 31 ход (6 плиток, 10 связей).
+  en:
+    name: Gomez's wine cellar
+    card: Storeroom under Gomez - door at the bottom of a vertical ladder
+    title: How to open Gomez's wine cellar in Gothic 1 Remake
+    desc: Storage under Gomez in the Old Camp castle - wine cellar behind the door at the bottom of a vertical ladder. 6 plates, 31 moves.
+    lead: Gomez's wine cellar - storeroom beneath the castle, door at the bottom of a vertical ladder (basement-style). 31 moves, 6 plates; not the dungeon or throne hall.
+    where: Old Camp castle, level below Gomez. Climb down the vertical ladder - door at the bottom. This storeroom / wine cellar is not the <a href="/en/locks/old-camp-dungeon-door/">dungeon by the ghost</a> (different route) or the <a href="/en/locks/gomez-throne-hall-chest/">throne hall</a>.
+    inside: Wine cellar - wine and supplies in the storeroom under the castle.
+    faq:
+      - q: Is this the dungeon?
+        a: No. The dungeon is via the corridor to the <a href="/en/locks/old-camp-dungeon-door/">door by the executed ghost</a> (68 moves). The cellar is a vertical ladder down under Gomez.
+      - q: Where is the ladder?
+        a: In the Old Camp castle - climb down to the storeroom under Gomez; the lock is on the door at the bottom.
+      - q: How many moves?
+        a: 31 moves (6 plates, 10 links).
+- code: SgjQQDUgCI
+  slug: gomez-bedside-chest
+  credit:
+    ru:
+      label: Конфигурацию нашёл
+      by: Влад · DTF
+    en:
+      label: Config found by
+      by: Vlad · DTF
+  ru:
+    name: Сундук в ногах Гомеза
+    card: Сундук у кровати в ногах Гомеза, Старый Лагерь
+    title: Как открыть сундук Гомеза в Gothic 1 Remake
+    desc: "Сундук у кровати в ногах Гомеза, в замке Старого лагеря. Личный тайник босса Старого лагеря. Параметры: 5 плиток, 68 ходов, 9 связей. Открой без сломанных отмычек."
+    lead: 68 ходов - один из длиннейших замков каталога. Сундук у кровати в ногах Гомеза в замке Старого лагеря; вручную почти нереально, решатель выдаёт путь по шагам.
+    where: Замок Старого лагеря, комната Гомеза - сундук стоит у кровати в ногах босса. Не путать со сундуком у стены со стороны комнаты Ворона.
+    inside: Амулет защиты от пламени, экстракт силы (+2 к силе постоянно), целебный элексир (исцеление 100 HP) и 2 северных тёмных цветка.
+    faq:
+      - q: Почему 68 ходов?
+        a: Один из самых длинных замков каталога. Рекорд сейчас у <a href="/locks/gomez-wall-chest/">сундука у стены</a> - 75 ходов. Решатель показывает каждый шаг без ударов в стену.
+      - q: Где точно сундук?
+        a: У кровати в ногах Гомеза, в его комнате в замке Старого лагеря.
+      - q: Откуда взялась конфигурация?
+        a: Нашёл и прислал Влад с DTF (<a href="https://dtf.ru/id644393">dtf.ru/id644393</a>), сверено с игрой и решателем.
+  en:
+    name: Gomez bedside chest
+    card: Chest at the foot of Gomez's bed, Old Camp
+    title: How to open Gomez's chest in Gothic 1 Remake
+    desc: "Chest at the foot of Gomez's bed in the Old Camp castle. The personal stash of the Old Camp's boss. Stats: 5 plates, 68 moves, 9 links. Open it without breaking lockpicks."
+    lead: 68 moves - one of the catalog's longest locks. The chest at the foot of Gomez's bed in the Old Camp castle; nearly impossible by hand, the solver gives you the path step by step.
+    where: Old Camp castle, Gomez's room - the chest sits at the foot of the boss's bed. Not the wall chest on the Voran room side.
+    inside: Fire protection amulet, strength extract (+2 Strength permanently), healing elixir (100 HP heal), and 2 northern dark flowers.
+    faq:
+      - q: Why 68 moves?
+        a: One of the catalog's longest locks. The record is now the <a href="/en/locks/gomez-wall-chest/">wall chest</a> at 75 moves. The solver shows each step without wall hits.
+      - q: Where exactly is the chest?
+        a: At the foot of Gomez's bed, in his room in the Old Camp castle.
+      - q: Where did this config come from?
+        a: Found and submitted by Vlad from DTF (<a href="https://dtf.ru/id644393">dtf.ru/id644393</a>), verified in-game and in the solver.
+- code: ZDAkKqACQECQAA
+  slug: gomez-wall-chest
+  ru:
+    name: Сундук у стены в покоях Гомеза
+    card: Сундук у стены - со стороны комнаты Ворона, рекорд каталога
+    title: Как открыть сундук у стены в покоях Гомеза в Gothic 1 Remake
+    desc: Сундук у стены в комнате Гомеза. Со стороны комнаты Ворона. 6 плиток, 75 ходов - рекорд каталога.
+    lead: 75 ходов - новый рекорд каталога. Сундук у стены в покоях Гомеза; замок со стороны комнаты Ворона справа. На первом уровне взлома не открыть.
+    where: Покои Гомеза в замке Старого лагеря - сундук у стены. Это замок из комнаты Ворона (справа в покоях Гомеза), не сундук у кровати босса.
+    inside: Лут в сундуке у стены - отдельно от сундука в ногах Гомеза.
+    faq:
+      - q: Можно ли на первом уровне взлома?
+        a: Нет - замок слишком сложный для стартового навыка. Нужен прокачанный взлом или решатель после сбора связей.
+      - q: Чем отличается от сундука у кровати?
+        a: У кровати Гомеза другой код (<code>SgjQQDUgCI</code>, 68 ходов). Этот сундук у стены - <code>ZDAkKqACQECQAA</code>, 75 ходов.
+      - q: Сколько ходов?
+        a: 75 ходов - рекорд каталога (6 плиток, 10 связей).
+  en:
+    name: Wall chest in Gomez's chambers
+    card: Wall chest from Voran side - catalog record
+    title: How to open the wall chest in Gomez's chambers in Gothic 1 Remake
+    desc: Wall chest in Gomez's room. From Voran's side. 6 plates, 75 moves - catalog record.
+    lead: 75 moves - new catalog record. The wall chest in Gomez's chambers; lock on the Voran room side. Cannot be opened at lockpicking level 1.
+    where: Gomez's chambers in the Old Camp castle - chest against the wall. This is the lock from Voran's room (right side of Gomez's chambers), not the boss's bedside chest.
+    inside: Loot in the wall chest - separate from the chest at Gomez's feet.
+    faq:
+      - q: Can I open it at lockpicking level 1?
+        a: No - the lock is too hard for starter skill. You need trained lockpicking or the solver after collecting links.
+      - q: How is this different from the bedside chest?
+        a: Gomez's bedside chest is a different code (<code>SgjQQDUgCI</code>, 68 moves). This wall chest is <code>ZDAkKqACQECQAA</code>, 75 moves.
+      - q: How many moves?
+        a: 75 moves - catalog record (6 plates, 10 links).
+- code: jV46BEAAIAAAJLASAAA
+  slug: voran-bedside-chest
+  ru:
+    name: Сундук у кровати Ворона
+    card: Первый замок на 7 плиток - ключ от башни Ворона
+    title: Как открыть сундук у кровати Ворона в Gothic 1 Remake
+    desc: Сундук у кровати Ворона - первый замок на 7 плиток в каталоге. Ключ от башни, кольцо от огня. 38 ходов.
+    lead: "Первый замок каталога на 7 плиток. Сундук у кровати Ворона в покоях Гомеза: ключ от башни Ворона, кольцо защиты от огня и расходники."
+    where: Комната Ворона справа в покоях Гомеза, замок Старого лагеря. Сундук у его кровати. Напротив слева — <a href="/locks/arto-room-door/">комната Арто</a> с двумя сундуками.
+    inside: Кольцо защиты от огня, 2 целебных экстракта (исцеление 70 HP), зов сна, подсвечник, 2 столовых прибора, ключ от башни Ворона, 40 монет. Ключ открывает дверь в ногах Ворона (справа при входе) - за ней первый этаж башни с девятью сундуками.
+    faq:
+      - q: Почему 7 плиток?
+        a: Это первый проверенный замок каталога с 7 плитками. Решатель поддерживает до 8.
+      - q: Что даёт ключ от башни?
+        a: Дверь в ногах Ворона без взлома. За ней первый этаж башни Ворона - 9 сундуков; в каталоге пока <a href="/locks/raven-tower-left-chest/">левый</a> и <a href="/locks/raven-tower-right-chest/">правый</a> у входа.
+      - q: Сколько ходов?
+        a: 38 ходов (7 плиток, 10 связей).
+  en:
+    name: Voran's bedside chest
+    card: First 7-plate lock - Raven Tower key
+    title: How to open Voran's bedside chest in Gothic 1 Remake
+    desc: Chest at Voran's bed - first 7-plate lock in the catalog. Raven Tower key, fire protection ring. 38 moves.
+    lead: "The catalog's first 7-plate lock. Voran's bedside chest in Gomez's chambers: Raven Tower key, fire protection ring, and consumables."
+    where: Voran's room on the right in Gomez's chambers, Old Camp castle. Chest by his bed. Opposite on the left - <a href="/en/locks/arto-room-door/">Arto's room</a> with two chests.
+    inside: Fire protection ring, 2 healing extracts (70 HP heal), call of sleep, candlestick, 2 cutlery, Raven Tower key, 40 coins. The key opens the door at Voran's feet (on the right when entering) - beyond it, Raven Tower's first floor with nine chests.
+    faq:
+      - q: Why 7 plates?
+        a: This is the first verified 7-plate lock in the catalog. The solver supports up to 8.
+      - q: What does the tower key do?
+        a: "Opens the door at Voran's feet without lockpicking. Beyond it: Raven Tower's first floor with 9 chests; the catalog has the <a href=\"/en/locks/raven-tower-left-chest/\">left</a> and <a href=\"/en/locks/raven-tower-right-chest/\">right</a> chests by the entrance so far."
+      - q: How many moves?
+        a: 38 moves (7 plates, 10 links).
+- code: TbYwABSyBC
+  slug: arto-room-door
+  ru:
+    name: Дверь в комнату Арто
+    card: Комната Арто слева в покоях Гомеза - напротив Ворона
+    title: Как открыть дверь в комнату Арто в Gothic 1 Remake
+    desc: Дверь в комнату Арто в покоях Гомеза - напротив комнаты Ворона. 5 плиток, 31 ход.
+    lead: "Комната Арто в покоях Гомеза - противоположная комнате Ворона справа. Дверь: 31 ход, 5 плиток."
+    where: Покои Гомеза, замок Старого лагеря. Комната Арто слева (напротив <a href="/locks/voran-bedside-chest/">комнаты Ворона</a> справа). За дверью два сундука у кроватей.
+    inside: Доступ в комнату Арто - к сундукам у ближней и дальней кровати.
+    faq:
+      - q: Это не комната Ворона?
+        a: Нет. Ворон справа (<a href="/locks/voran-bedside-chest/">сундук у его кровати</a>, 7 плиток). Арто - слева, эта дверь.
+      - q: Сколько ходов?
+        a: 31 ход (5 плиток, 9 связей).
+  en:
+    name: Door to Arto's room
+    card: Arto's room on the left in Gomez's chambers - opposite Voran
+    title: How to open the door to Arto's room in Gothic 1 Remake
+    desc: Door to Arto's room in Gomez's chambers - opposite Voran's room. 5 plates, 31 moves.
+    lead: "Arto's room in Gomez's chambers - opposite Voran's room on the right. Door: 31 moves, 5 plates."
+    where: Gomez's chambers, Old Camp castle. Arto's room on the left (opposite <a href="/en/locks/voran-bedside-chest/">Voran's room</a> on the right). Two bedside chests beyond.
+    inside: Access to Arto's room - chests by the near and far beds.
+    faq:
+      - q: Isn't this Voran's room?
+        a: No. Voran is on the right (<a href="/en/locks/voran-bedside-chest/">his bedside chest</a>, 7 plates). Arto is on the left - this door.
+      - q: How many moves?
+        a: 31 moves (5 plates, 9 links).
+- code: ZpEUEAAAgASIAk
+  slug: arto-far-bed-chest
+  ru:
+    name: Сундук у дальней кровати Арто
+    card: Дальняя кровать - кольцо защиты от оружия, экстракты
+    title: Как открыть сундук у дальней кровати Арто в Gothic 1 Remake
+    desc: Сундук в ногах у дальней кровати в комнате Арто. Кольцо защиты от оружия, экстракты. 40 ходов.
+    lead: Сундук в ногах у дальней кровати в комнате Арто. 40 ходов; кольцо защиты от оружия и экстракты жизни.
+    where: Комната Арто в покоях Гомеза (слева, напротив Ворона). Сундук у дальней кровати - не путать с <a href="/locks/arto-near-bed-chest/">сундуком у ближней</a>.
+    inside: Кольцо защиты от оружия, 2 экстракта жизни, столовые приборы.
+    faq:
+      - q: Где ближний сундук?
+        a: У ближней кровати - <a href="/locks/arto-near-bed-chest/">другой замок</a> (кольцо мощи, руда, 52 хода).
+      - q: Как попасть в комнату?
+        a: Через <a href="/locks/arto-room-door/">дверь в комнату Арто</a> или из покоев Гомеза после <a href="/locks/gomez-chambers-door/">двери в покои</a>.
+      - q: Сколько ходов?
+        a: 40 ходов (6 плиток, 7 связей).
+  en:
+    name: Arto's far bed chest
+    pageName: Chest at Arto's far bed
+    card: Far bed - weapon protection ring, life extracts
+    title: How to open the chest at Arto's far bed in Gothic 1 Remake
+    desc: Chest at the foot of the far bed in Arto's room. Weapon protection ring, extracts. 40 moves.
+    lead: Chest at the foot of the far bed in Arto's room. 40 moves; weapon protection ring and life extracts.
+    where: Arto's room in Gomez's chambers (left, opposite Voran). Chest at the far bed - not the <a href="/en/locks/arto-near-bed-chest/">near bed chest</a>.
+    inside: Weapon protection ring, 2 life extracts, cutlery.
+    faq:
+      - q: Where is the near bed chest?
+        a: At the near bed - <a href="/en/locks/arto-near-bed-chest/">a different lock</a> (ring of power, ore, 52 moves).
+      - q: How do I reach the room?
+        a: Through the <a href="/en/locks/arto-room-door/">door to Arto's room</a> or via Gomez's chambers after the <a href="/en/locks/gomez-chambers-door/">chamber door</a>.
+      - q: How many moves?
+        a: 40 moves (6 plates, 7 links).
+- code: Y2WYAEGAAIGEAY
+  slug: arto-near-bed-chest
+  ru:
+    name: Сундук у ближней кровати Арто
+    card: Ближняя кровать - кольцо мощи, руда, 52 хода
+    title: Как открыть сундук у ближней кровати Арто в Gothic 1 Remake
+    desc: Сундук у ближней кровати в комнате Арто. Кольцо мощи, руда, 52 хода - длинный замок.
+    lead: Сундук у ближней кровати в комнате Арто. 52 хода - один из длинных в покоях Гомеза; кольцо мощи и 22 руды.
+    where: Комната Арто, покои Гомеза. Сундук у ближней кровати (ближе к двери). Дальний - <a href="/locks/arto-far-bed-chest/">у другой кровати</a>.
+    inside: Кольцо мощи, экстракт жизни, столовые приборы, 22 руды.
+    faq:
+      - q: Почему 52 хода?
+        a: Длинный 6-плиточный замок. Решатель показывает путь по шагам - вручную запомнить тяжело.
+      - q: Где дальний сундук?
+        a: У дальней кровати - <a href="/locks/arto-far-bed-chest/">сундук с кольцом защиты от оружия</a> (40 ходов).
+      - q: Сколько ходов?
+        a: 52 хода (6 плиток, 9 связей).
+  en:
+    name: Arto's near bed chest
+    pageName: Chest at Arto's near bed
+    card: Near bed - ring of power, ore, 52 moves
+    title: How to open the chest at Arto's near bed in Gothic 1 Remake
+    desc: Chest at the near bed in Arto's room. Ring of power, ore, 52 moves - a long lock.
+    lead: Chest at the near bed in Arto's room. 52 moves - one of the longer locks in Gomez's chambers; ring of power and 22 ore.
+    where: Arto's room, Gomez's chambers. Chest at the near bed (closer to the door). Far bed - <a href="/en/locks/arto-far-bed-chest/">other chest</a>.
+    inside: Ring of power, life extract, cutlery, 22 ore.
+    faq:
+      - q: Why 52 moves?
+        a: A long 6-plate lock. The solver shows each step - hard to memorize by hand.
+      - q: Where is the far bed chest?
+        a: At the far bed - <a href="/en/locks/arto-far-bed-chest/">weapon protection ring chest</a> (40 moves).
+      - q: How many moves?
+        a: 52 moves (6 plates, 9 links).
+- code: YHayiAREIAIABE
+  slug: gomez-bedrooms-door
+  ru:
+    name: Дверь на этаже спален покоев
+    card: Первая дверь на этаже спален - комната с двумя сундуками
+    title: Как открыть дверь на этаже спален покоев в Gothic 1 Remake
+    desc: Первая дверь на этаже спален покоев Гомеза - комнаты Ворона, Гомеза и Арто. 6 плиток, 45 ходов.
+    lead: Первая дверь на этаже спален в покоях Гомеза. 45 ходов, 6 плиток - за ней спальня с двумя сундуками у кроватей (хозяин комнаты пока неизвестен).
+    where: Этаж спален покоев Гомеза, замок Старого лагеря - тот же уровень, что <a href="/locks/voran-bedside-chest/">комната Ворона</a>, <a href="/locks/gomez-bedside-chest/">спальня Гомеза</a> и <a href="/locks/arto-room-door/">комната Арто</a>. Это первая дверь на этаже.
+    inside: Доступ в неизвестную спальню - к сундукам у ближней и дальней кровати.
+    faq:
+      - q: Это не комната Ворона или Арто?
+        a: Нет. Ворон справа, Арто слева - у них свои двери. Это другая дверь на том же этаже спален.
+      - q: Сколько ходов?
+        a: 45 ходов (6 плиток, 10 связей).
+  en:
+    name: Door on Gomez's bedrooms floor
+    card: First door on bedrooms floor - room with two chests
+    title: How to open the door on Gomez's bedrooms floor in Gothic 1 Remake
+    desc: First door on the bedrooms floor in Gomez's chambers - Voran, Gomez, and Arto rooms. 6 plates, 45 moves.
+    lead: The first door on the bedrooms floor in Gomez's chambers. 45 moves, 6 plates - beyond it, a bedroom with two bedside chests (room owner unknown so far).
+    where: Bedrooms floor in Gomez's chambers, Old Camp castle - same level as <a href="/en/locks/voran-bedside-chest/">Voran's room</a>, <a href="/en/locks/gomez-bedside-chest/">Gomez's bedroom</a>, and <a href="/en/locks/arto-room-door/">Arto's room</a>. This is the first door on that floor.
+    inside: Access to an unknown bedroom - chests by the near and far beds.
+    faq:
+      - q: Isn't this Voran's or Arto's room?
+        a: No. Voran is on the right, Arto on the left - they have their own doors. This is a different door on the same bedrooms floor.
+      - q: How many moves?
+        a: 45 moves (6 plates, 10 links).
+- code: RzbBFITEQQ
+  slug: gomez-bedrooms-far-chest
+  ru:
+    name: Сундук у дальней кровати (этаж спален)
+    card: Дальняя кровать - кольцо рудной кожи, экстракты, алкоголь
+    title: Как открыть дальний сундук на этаже спален покоев в Gothic 1 Remake
+    desc: Дальний сундук в ногах кровати в спальне этажа спален. Кольцо рудной кожи, экстракты, алкоголь. 39 ходов.
+    lead: Сундук в ногах у дальней кровати в спальне на этаже спален покоев. 39 ходов; кольцо рудной кожи, экстракты жизни и запас вина с пивом.
+    where: Спальня за <a href="/locks/gomez-bedrooms-door/">первой дверью на этаже спален</a>. Сундук у дальней кровати - не путать с <a href="/locks/gomez-bedrooms-near-chest/">ближним сундуком</a>.
+    inside: Кольцо рудной кожи, 3 экстракта жизни, 5 вина, 7 пива.
+    faq:
+      - q: Где ближний сундук?
+        a: У ближней кровати - <a href="/locks/gomez-bedrooms-near-chest/">другой замок</a> (кольцо великой жизненной силы, 56 ходов).
+      - q: Как попасть в комнату?
+        a: Через <a href="/locks/gomez-bedrooms-door/">дверь на этаже спален</a> из покоев Гомеза.
+      - q: Сколько ходов?
+        a: 39 ходов (5 плиток, 10 связей). Первая плитка уже в центре.
+  en:
+    name: Far bed chest (bedrooms floor)
+    card: Far bed - ore skin ring, extracts, alcohol
+    title: How to open the far bed chest on Gomez's bedrooms floor in Gothic 1 Remake
+    desc: Far chest at the foot of the bed in the bedrooms-floor room. Ore skin ring, extracts, alcohol. 39 moves.
+    lead: Chest at the foot of the far bed in the bedroom on Gomez's bedrooms floor. 39 moves; ore skin ring, life extracts, wine and beer.
+    where: Bedroom beyond the <a href="/en/locks/gomez-bedrooms-door/">first door on the bedrooms floor</a>. Chest at the far bed - not the <a href="/en/locks/gomez-bedrooms-near-chest/">near chest</a>.
+    inside: Ore skin ring, 3 life extracts, 5 wine, 7 beer.
+    faq:
+      - q: Where is the near bed chest?
+        a: At the near bed - <a href="/en/locks/gomez-bedrooms-near-chest/">a different lock</a> (ring of great vitality, 56 moves).
+      - q: How do I reach the room?
+        a: Through the <a href="/en/locks/gomez-bedrooms-door/">door on the bedrooms floor</a> in Gomez's chambers.
+      - q: How many moves?
+        a: 39 moves (5 plates, 10 links). Plate 1 is already centred.
+- code: ZVbYAEKEBgECAA
+  slug: gomez-bedrooms-near-chest
+  ru:
+    name: Сундук у ближней кровати (этаж спален)
+    card: Ближняя кровать - кольцо великой жизненной силы, 56 ходов
+    title: Как открыть ближний сундук на этаже спален покоев в Gothic 1 Remake
+    desc: Ближний сундук в ногах кровати в спальне этажа спален. Кольцо великой жизненной силы, экстракты. 56 ходов.
+    lead: Сундук у ближней кровати в спальне на этаже спален покоев. 56 ходов - длинный замок; кольцо великой жизненной силы и экстракты.
+    where: Спальня за <a href="/locks/gomez-bedrooms-door/">дверью на этаже спален</a>. Сундук у ближней кровати (ближе к двери). Дальний - <a href="/locks/gomez-bedrooms-far-chest/">у другой кровати</a>.
+    inside: Кольцо великой жизненной силы, экстракт жизни, целебный экстракт, столовые приборы.
+    faq:
+      - q: Почему 56 ходов?
+        a: Длинный 6-плиточный замок на этаже спален. Решатель показывает путь по шагам.
+      - q: Где дальний сундук?
+        a: У дальней кровати - <a href="/locks/gomez-bedrooms-far-chest/">сундук с кольцом рудной кожи</a> (39 ходов).
+      - q: Сколько ходов?
+        a: 56 ходов (6 плиток, 8 связей).
+  en:
+    name: Near bed chest (bedrooms floor)
+    card: Near bed - ring of great vitality, 56 moves
+    title: How to open the near bed chest on Gomez's bedrooms floor in Gothic 1 Remake
+    desc: Near chest at the foot of the bed in the bedrooms-floor room. Ring of great vitality, extracts. 56 moves.
+    lead: Chest at the near bed in the bedroom on Gomez's bedrooms floor. 56 moves - a long lock; ring of great vitality and extracts.
+    where: Bedroom beyond the <a href="/en/locks/gomez-bedrooms-door/">door on the bedrooms floor</a>. Chest at the near bed (closer to the door). Far bed - <a href="/en/locks/gomez-bedrooms-far-chest/">other chest</a>.
+    inside: Ring of great vitality, life extract, healing extract, cutlery.
+    faq:
+      - q: Why 56 moves?
+        a: A long 6-plate lock on the bedrooms floor. The solver shows each step.
+      - q: Where is the far bed chest?
+        a: At the far bed - <a href="/en/locks/gomez-bedrooms-far-chest/">ore skin ring chest</a> (39 moves).
+      - q: How many moves?
+        a: 56 moves (6 plates, 8 links).
+- code: bVyMKQAAGQAAWA
+  slug: raven-tower-left-chest
+  ru:
+    name: Левый сундук в башне Ворона
+    card: 1-й этаж башни, слева у входа - 2 из 9 сундуков в каталоге
+    title: Как открыть левый сундук в башне Ворона в Gothic 1 Remake
+    desc: Первый сундук слева в башне Ворона после входа из покоев. 6 кубков, 2500 монет, руда. 35 ходов.
+    lead: Первый сундук слева на первом этаже башни Ворона. На этаже всего 9 сундуков - в каталоге пока этот и правый у входа. 35 ходов, внутри монеты и руда.
+    where: Первый этаж башни Ворона в замке Старого лагеря. Ключ из сундука у кровати Ворона открывает дверь в ногах босса - за ней комната с девятью сундуками. Этот стоит слева у входа (рядом справа - второй известный).
+    inside: 6 кубков, 10 столовых приборов, 29 руды, 2500 монет.
+    faq:
+      - q: Сколько сундуков на этаже?
+        a: 'Девять на 1-м этаже — в каталоге два у входа. Выше: <a href="/locks/raven-tower-floor2-stairs-chest/">2-й</a>, <a href="/locks/raven-tower-floor3-entrance-chest/">3-й</a>, <a href="/locks/raven-tower-floor4-elixirs-chest/">4-й</a> этажи и <a href="/locks/raven-tower-top-chest/">вершина</a>.'
+      - q: Нужно ли взламывать дверь в башню?
+        a: Нет. Ключ от башни лежит в <a href="/locks/voran-bedside-chest/">сундуке у кровати Ворона</a>.
+      - q: Сколько ходов?
+        a: 35 ходов (6 плиток, 9 связей).
+  en:
+    name: Raven Tower left chest
+    card: Floor 1, left by entrance - 2 of 9 chests in catalog
+    title: How to open the left chest in Raven Tower in Gothic 1 Remake
+    desc: First chest on the left in Raven Tower after entering from the chambers. 6 cups, 2500 coins, ore. 35 moves.
+    lead: The first chest on the left on Raven Tower's first floor. Nine chests on that floor - the catalog has this one and the right chest by the entrance so far. 35 moves, coins and ore inside.
+    where: Raven Tower's first floor in the Old Camp castle. The key from Voran's bedside chest opens the door at his feet - beyond it, a room with nine chests. This one is on the left by the entrance.
+    inside: 6 goblets, 10 cutlery, 29 ore, 2500 coins.
+    faq:
+      - q: How many chests on this floor?
+        a: Nine. The catalog has two by the entrance so far - this left one and the <a href="/en/locks/raven-tower-right-chest/">right chest</a>. We'll add the other seven as codes come in.
+      - q: Do I need to pick the tower door?
+        a: No. The tower key is in <a href="/en/locks/voran-bedside-chest/">Voran's bedside chest</a>.
+      - q: How many moves?
+        a: 35 moves (6 plates, 9 links).
+- code: bEhYigAEVCQEAA
+  slug: raven-tower-right-chest
+  ru:
+    name: Правый сундук в башне Ворона
+    card: 1-й этаж башни, справа у входа - 2 из 9 сундуков в каталоге
+    title: Как открыть правый сундук в башне Ворона в Gothic 1 Remake
+    desc: Сундук справа в башне Ворона. Иззубренные топоры и ржавые мечи. 6 плиток, 23 хода.
+    lead: Сундук справа у входа на первом этаже башни Ворона. На этаже девять сундуков всего - в каталоге пока этот и левый. 23 хода, внутри оружие.
+    where: Первый этаж башни Ворона - та же комната, что и левый сундук у входа. Всего на этаже 9 сундуков; этот стоит справа от двери.
+    inside: 3 иззубренных топора (13 урона рассечением, 9 силы), 2 ржавых меча (10 урона рассечением, 5 силы).
+    faq:
+      - q: Сколько сундуков на этаже?
+        a: 'Девять на 1-м этаже — в каталоге два у входа. Выше: <a href="/locks/raven-tower-floor2-stairs-chest/">2-й</a>–<a href="/locks/raven-tower-top-chest/">вершина</a>.'
+      - q: Сколько ходов?
+        a: 23 хода (6 плиток, 10 связей).
+  en:
+    name: Raven Tower right chest
+    card: Floor 1, right by entrance - 2 of 9 chests in catalog
+    title: How to open the right chest in Raven Tower in Gothic 1 Remake
+    desc: Chest on the right in Raven Tower. Serrated axes and rusty swords. 6 plates, 23 moves.
+    lead: The chest on the right by the entrance on Raven Tower's first floor. Nine chests on that floor total - the catalog has this one and the left chest so far. 23 moves, weapons inside.
+    where: Raven Tower's first floor - same room as the left chest by the entrance. Nine chests on this floor; this one is on the right of the door.
+    inside: 3 serrated axes (13 slash damage, 9 Strength), 2 rusty swords (10 slash damage, 5 Strength).
+    faq:
+      - q: How many chests on this floor?
+        a: Nine. The catalog has two by the entrance so far - the <a href="/en/locks/raven-tower-left-chest/">left chest</a> and this one. The other seven as codes come in.
+      - q: How many moves?
+        a: 23 moves (6 plates, 10 links).
+- code: YqahUKAAACIIAA
+  slug: raven-tower-floor2-stairs-chest
+  ru:
+    name: Сундук у лестницы (2-й этаж башни)
+    pageName: Сундук у лестницы на 2-м этаже башни Ворона
+    card: 2-й этаж - сразу после лестницы, вино и пиво
+    title: Как открыть сундук у лестницы на 2-м этаже башни Ворона в Gothic 1 Remake
+    desc: Сундук сразу после лестницы на 2-м этаже башни Ворона. Вино, крепкое вино, пиво. 6 плиток, 48 ходов.
+    lead: Первый сундук на 2-м этаже башни Ворона - сразу после подъёма с 1-го. 48 ходов; внутри запас алкоголя.
+    where: Башня Ворона, 2-й этаж. Поднимаетесь с 1-го этажа по лестнице - сундук у лестничного проёма.
+    inside: 12 вина, 8 крепкого вина, 26 пива.
+    faq:
+      - q: Где следующий сундук?
+        a: На том же этаже - <a href="/locks/raven-tower-floor2-chest-2/">второй сундук</a>.
+      - q: Сколько ходов?
+        a: 48 ходов (6 плиток, 8 связей).
+  en:
+    name: Chest by stairs (Raven Tower floor 2)
+    pageName: Chest by the stairs on Raven Tower floor 2
+    card: Floor 2 right after the stairs - wine and beer
+    title: How to open the chest by the stairs on Raven Tower floor 2 in Gothic 1 Remake
+    desc: Chest right after the stairs on Raven Tower floor 2. Wine, strong wine, beer. 6 plates, 48 moves.
+    lead: First chest on Raven Tower floor 2 - right after climbing from floor 1. 48 moves; alcohol stash inside.
+    where: Raven Tower, 2nd floor. Climb from floor 1 - chest at the stairwell.
+    inside: 12 wine, 8 strong wine, 26 beer.
+    faq:
+      - q: Where is the next chest?
+        a: Same floor - <a href="/en/locks/raven-tower-floor2-chest-2/">second chest</a>.
+      - q: How many moves?
+        a: 48 moves (6 plates, 8 links).
+- code: Q6XCAhAglI
+  slug: raven-tower-floor2-chest-2
+  ru:
+    name: Второй сундук на 2-м этаже башни
+    pageName: Второй сундук на 2-м этаже башни Ворона
+    card: 2-й этаж - 12 приборов и 8897 монет
+    title: Как открыть второй сундук на 2-м этаже башни Ворона в Gothic 1 Remake
+    desc: Второй сундук на 2-м этаже башни Ворона. 12 столовых приборов и 8897 монет. 5 плиток, 27 ходов.
+    lead: Второй сундук на 2-м этаже башни Ворона. 27 ходов; 8897 монет и приборы.
+    where: Башня Ворона, 2-й этаж - после сундука у лестницы.
+    inside: 12 столовых приборов и 8897 монет.
+    faq:
+      - q: Сколько ходов?
+        a: 27 ходов (5 плиток, 8 связей).
+  en:
+    name: Second chest on Raven Tower floor 2
+    card: Floor 2 - 12 cutlery and 8897 coins
+    title: How to open the second chest on Raven Tower floor 2 in Gothic 1 Remake
+    desc: Second chest on Raven Tower floor 2. 12 cutlery and 8897 coins. 5 plates, 27 moves.
+    lead: Second chest on Raven Tower floor 2. 27 moves; 8897 coins and cutlery.
+    where: Raven Tower, 2nd floor - after the chest by the stairs.
+    inside: 12 cutlery and 8897 coins.
+    faq:
+      - q: How many moves?
+        a: 27 moves (5 plates, 8 links).
+- code: QmzSSoBAAg
+  slug: raven-tower-floor3-entrance-chest
+  ru:
+    name: Сундук у входа (3-й этаж башни)
+    pageName: Сундук у входа на 3-м этаже башни Ворона
+    card: 3-й этаж - волчьи когти, зубы, приборы
+    title: Как открыть сундук у входа на 3-м этаже башни Ворона в Gothic 1 Remake
+    desc: Сундук сразу перед вами на 3-м этаже башни Ворона. Волчьи когти, зубы, приборы. 44 хода.
+    lead: Сундук прямо перед вами на 3-м этаже башни Ворона. 44 хода; трофеи и приборы.
+    where: Башня Ворона, 3-й этаж - сразу после лестницы с 2-го.
+    inside: 11 волчьих когтей, 8 зубов, 13 столовых приборов.
+    faq:
+      - q: Ещё сундуки на этаже?
+        a: Да - <a href="/locks/raven-tower-floor3-empty-chest/">пустой сундук</a> рядом.
+      - q: Сколько ходов?
+        a: 44 хода (5 плиток, 8 связей).
+  en:
+    name: Chest at entrance (Raven Tower floor 3)
+    pageName: Chest at the entrance on Raven Tower floor 3
+    card: Floor 3 - wolf claws, teeth, cutlery
+    title: How to open the chest at the entrance on Raven Tower floor 3 in Gothic 1 Remake
+    desc: Chest right in front of you on Raven Tower floor 3. Wolf claws, teeth, cutlery. 44 moves.
+    lead: Chest right in front of you on Raven Tower floor 3. 44 moves; trophies and cutlery.
+    where: Raven Tower, 3rd floor - right after the stairs from floor 2.
+    inside: 11 wolf claws, 8 teeth, 13 cutlery.
+    faq:
+      - q: More chests on this floor?
+        a: Yes - the <a href="/en/locks/raven-tower-floor3-empty-chest/">empty chest</a> nearby.
+      - q: How many moves?
+        a: 44 moves (5 plates, 8 links).
+- code: RYIBEylAIA
+  slug: raven-tower-floor3-empty-chest
+  ru:
+    name: Пустой сундук (3-й этаж башни)
+    pageName: Пустой сундук на 3-м этаже башни Ворона
+    card: 3-й этаж - сундук пустой
+    title: Как открыть пустой сундук на 3-м этаже башни Ворона в Gothic 1 Remake
+    desc: Следующий сундук на 3-м этаже башни Ворона. Пустой. 5 плиток, 37 ходов.
+    lead: Следующий сундук на 3-м этаже - пустой. 37 ходов.
+    where: Башня Ворона, 3-й этаж - после сундука у входа.
+    inside: Пусто.
+    faq:
+      - q: Сколько ходов?
+        a: 37 ходов (5 плиток, 9 связей).
+  en:
+    name: Empty chest (Raven Tower floor 3)
+    pageName: Empty chest on Raven Tower floor 3
+    card: Floor 3 - empty chest
+    title: How to open the empty chest on Raven Tower floor 3 in Gothic 1 Remake
+    desc: Next chest on Raven Tower floor 3. Empty. 5 plates, 37 moves.
+    lead: Next chest on floor 3 - empty. 37 moves.
+    where: Raven Tower, 3rd floor - after the entrance chest.
+    inside: Empty.
+    faq:
+      - q: How many moves?
+        a: 37 moves (5 plates, 9 links).
+- code: h24ZgUAAEAQgAwAKQAA
+  slug: raven-tower-floor4-elixirs-chest
+  ru:
+    name: Сундук с эликсирами (4-й этаж башни)
+    pageName: Сундук с эликсирами на 4-м этаже башни Ворона
+    card: 4-й этаж за лестницей - зелья и экстракты
+    title: Как открыть сундук с эликсирами на 4-м этаже башни Ворона в Gothic 1 Remake
+    desc: Сундук за лестницей на 4-м этаже башни Ворона. Эликсиры и экстракты. 7 плиток, 36 ходов.
+    lead: Сундук с эликсирами на 4-м этаже за лестницей. 7 плиток, 36 ходов.
+    where: Башня Ворона, 4-й этаж. Слева - <a href="/locks/raven-tower-floor4-food-chest/">сундук с едой</a>.
+    inside: 3 эликсира магической энергии, 2 целебных эликсира, 2 экстракта магической энергии, целебный экстракт.
+    faq:
+      - q: Почему 7 плиток?
+        a: Второй 7-плиточный замок башни после <a href="/locks/voran-bedside-chest/">сундука Ворона</a>.
+      - q: Сколько ходов?
+        a: 36 ходов (7 плиток, 10 связей).
+  en:
+    name: Elixir chest (Raven Tower floor 4)
+    pageName: Elixir chest on Raven Tower floor 4
+    card: Floor 4 past stairs - potions and extracts
+    title: How to open the elixir chest on Raven Tower floor 4 in Gothic 1 Remake
+    desc: Chest past the stairs on Raven Tower floor 4. Elixirs and extracts. 7 plates, 36 moves.
+    lead: Elixir chest on floor 4 past the stairs. 7 plates, 36 moves.
+    where: Raven Tower, 4th floor. Left of it - the <a href="/en/locks/raven-tower-floor4-food-chest/">food chest</a>.
+    inside: 3 magic energy elixirs, 2 healing elixirs, 2 magic energy extracts, healing extract.
+    faq:
+      - q: Why 7 plates?
+        a: The tower's second 7-plate lock after <a href="/en/locks/voran-bedside-chest/">Voran's chest</a>.
+      - q: How many moves?
+        a: 36 moves (7 plates, 10 links).
+- code: aYqYiAQgCACABA
+  slug: raven-tower-floor4-food-chest
+  ru:
+    name: Сундук с едой (4-й этаж башни)
+    pageName: Сундук с едой на 4-м этаже башни Ворона
+    card: 4-й этаж слева от эликсиров - вино, пиво, мясо
+    title: Как открыть сундук с едой на 4-м этаже башни Ворона в Gothic 1 Remake
+    desc: Сундук слева от эликсиров на 4-м этаже башни Ворона. Вино, пиво, мясо. 43 хода.
+    lead: Сундук с едой на 4-м этаже, слева от эликсиров. 43 хода.
+    where: Башня Ворона, 4-й этаж - слева от <a href="/locks/raven-tower-floor4-elixirs-chest/">сундука с эликсирами</a>.
+    inside: 6 вина, 11 пива, 6 окороков, 9 жареного мяса.
+    faq:
+      - q: Сколько ходов?
+        a: 43 хода (6 плиток, 7 связей).
+  en:
+    name: Food chest (Raven Tower floor 4)
+    pageName: Food chest on Raven Tower floor 4
+    card: Floor 4 left of elixirs - wine, beer, meat
+    title: How to open the food chest on Raven Tower floor 4 in Gothic 1 Remake
+    desc: Chest to the left of the elixir chest on Raven Tower floor 4. Wine, beer, meat. 43 moves.
+    lead: Food chest on floor 4, left of the elixirs. 43 moves.
+    where: Raven Tower, 4th floor - left of the <a href="/en/locks/raven-tower-floor4-elixirs-chest/">elixir chest</a>.
+    inside: 6 wine, 11 beer, 6 hams, 9 roasted meat.
+    faq:
+      - q: How many moves?
+        a: 43 moves (6 plates, 7 links).
+- code: aMCmkAAGBBYAAA
+  slug: raven-tower-top-chest
+  ru:
+    name: Сундук на вершине башни Ворона
+    card: Верх башни - кольцо ловкости, зов сна, велайис
+    title: Как открыть сундук на вершине башни Ворона в Gothic 1 Remake
+    desc: Единственный сундук на вершине башни Ворона. Кольцо ловкости, зов сна, велайис. 48 ходов.
+    lead: Единственный сундук на вершине башни Ворона. 48 ходов; кольцо ловкости.
+    where: Вершина башни Ворона - подъём через все этажи от ключа Ворона.
+    inside: Кольцо ловкости, 4 зова сна, 8 велайис.
+    faq:
+      - q: Сколько ходов?
+        a: 48 ходов (6 плиток, 9 связей).
+  en:
+    name: Chest at the top of Raven Tower
+    card: Tower summit - agility ring, sleep call, velaiis
+    title: How to open the chest at the top of Raven Tower in Gothic 1 Remake
+    desc: The only chest at the top of Raven Tower. Agility ring, sleep call, velaiis herb. 48 moves.
+    lead: The only chest at the top of Raven Tower. 48 moves; agility ring.
+    where: Summit of Raven Tower - climb from Voran's key through all floors.
+    inside: Agility ring, 4 sleep calls, 8 velaiis.
+    faq:
+      - q: How many moves?
+        a: 48 moves (6 plates, 9 links).
+- code: aDasBgBgCAACCA
+  credit:
+    ru:
+      by: Влад · DTF
+    en:
+      by: Vlad · DTF
+  ru:
+    name: Ящик у огненного ящера
+    card: Первый ящик в пещерке у круга с огненным ящером на востоке
+  en:
+    name: Fire lizard cave box
+    card: First box in the small cave by the fire-lizard circle in the east
+- code: RrGUCRKQIQ
+  slug: silas-tavern-basement-chest
+  ru:
+    name: Сундук в подвале таверны
+    card: Подводный сундук в подвале под таверной Силаса - топор Брана, квест «По шею»
+    title: Как открыть сундук в подвале таверны Силаса в Gothic 1 Remake
+    desc: "Подводный сундук в подвале под таверной Силаса (Новый лагерь). Внутри топор Брана. Параметры: 5 плиток, 30 ходов, 10 связей. Открой без сломанных отмычек."
+    lead: Подводный сундук в затопленном подвале под таверной Силаса  -  топор Брана для квеста «По шею». Не путать со сундуком в складе за дверью за барменом.
+    where: "Затопленный подвал под таверной Силаса в Новом лагере. Добраться можно через подводный туннель с озера за таверной или спустившись в подвал за дверью в склад (дверь #9 за Силасом)."
+    inside: Топор Брана  -  нужен для квеста «По шею».
+    faq:
+      - q: Это не сундук в складе за баром?
+        a: Нет. За Силасом  -  дверь в склад таверны, там справа другой сундук. Этот  -  в затопленном подвале ниже, под водой.
+      - q: Как добраться?
+        a: "Нырнуть: подводный туннель с озера за таверной или спуск в подвал из склада."
+      - q: Сколько ходов?
+        a: 30 ходов (5 плиток, 10 связей).
+  en:
+    name: Silas tavern basement chest
+    card: Underwater chest in Silas's tavern basement - Bran's axe, Up to His Neck quest
+    title: How to open the Silas tavern basement chest in Gothic 1 Remake
+    desc: "Underwater chest in the basement beneath Silas's tavern (New Camp). Inside is Bran's axe. Stats: 5 plates, 30 moves, 10 links. Open it without breaking lockpicks."
+    lead: An underwater chest in the flooded basement under Silas's tavern  -  Bran's axe for the "Up to His Neck" quest. Don't confuse it with the storeroom chest behind the door past the bartender.
+    where: "Flooded basement under Silas's tavern in the New Camp. Reach it via an underwater tunnel from the lake behind the tavern, or descend from the storeroom (door #9 past Silas)."
+    inside: Bran's axe  -  required for the "Up to His Neck" quest.
+    faq:
+      - q: Isn't this the storeroom chest behind the bar?
+        a: No. Past Silas is a door to the tavern storeroom with a different chest on the right. This one is in the flooded basement below, underwater.
+      - q: How do I get there?
+        a: "Swim: underwater tunnel from the lake behind the tavern, or descend from the storeroom."
+      - q: How many moves?
+        a: 30 moves (5 plates, 10 links).
+- code: Yt05ARCBAAARCA
+  ru:
+    name: Сундук склада таверны
+    card: Сундук справа в складе таверны за дверью за Силасом (бармен) - это не подвал
+  en:
+    name: Tavern storeroom chest
+    card: Chest on the right in the tavern storeroom behind Silas's door (not the basement)
+- code: aSnYABCIZIICCA
+  ru:
+    name: Склад таверны - дверь
+    card: Запертая дверь в склад таверны Нового лагеря за барменом Силасом
+  en:
+    name: Tavern storeroom door
+    card: Locked door to the New Camp tavern storeroom behind bartender Silas
+- code: aDAIAEhAAAQaAA
+  ru:
+    name: Сундук в домике напротив Джана
+    card: Домик напротив Джана у пруда рядом с Новым лагерем - нужно переплыть; внутри чертёж «Дробителя камней» (требует кузнечное дело)
+  en:
+    name: Hut chest opposite Jan (New Camp)
+    card: Hut opposite Jan, across the pond near the New Camp - swim over; inside, the Stone Crusher blueprint (needs Smithing)
+- code: bE0IBAAQkBCAEg
+  slug: graham-chest
+  ru:
+    name: Сундук Грэхэма
+    card: Сундук картографа Грэхэма в Старом лагере - у хижины слева от Северных ворот, где покупают карту колонии за руду
+    title: Как открыть сундук Грэхэма в Gothic 1 Remake
+    desc: "Хижина картографа Грэхэма слева от Северных ворот Старого лагеря (перед первым котлом). Запас старателя-картографа. Параметры: 6 плиток, 40 ходов, 8 связей. Открой без сломанных отмычек."
+    lead: Грэхэм продаёт карту колонии у Северных ворот  -  его личный сундук часто ищут по запросу «Graham chest combination». 40 ходов, 6 плиток, одна из длинных конфигураций Старого лагеря.
+    where: Хижина картографа Грэхэма слева от Северных ворот Старого лагеря, перед первым котлом. Грэхэм продаёт карту колонии и карту Старого лагеря за руду (game8, colony-guide).
+    inside: "Запас старателя-картографа: руда, припасы и полезный лут для раннего прохождения."
+    faq:
+      - q: Где хижина относительно ворот?
+        a: Слева от Северных ворот, перед первым котлом. Рядом с Грэхэмом, который торгует картами.
+      - q: Почему ищут Graham chest combination?
+        a: 40 ходов и 6 плиток  -  длинный замок; в текстовых гайдах редко дают полную конфигурацию штифтов и связей.
+      - q: Сколько ходов?
+        a: 40 ходов (6 плиток, 8 связей).
+  en:
+    name: Graham's chest
+    card: Cartographer Graham's chest in the Old Camp - by his hut left of the North Gate, where you buy the colony map for ore
+    title: How to open Graham's chest in Gothic 1 Remake
+    desc: "Cartographer Graham's hut left of the Old Camp North Gate (before the first cauldron). The cartographer's personal stash. Stats: 6 plates, 40 moves, 8 links. Open it without breaking lockpicks."
+    lead: Graham sells the colony map by the North Gate  -  players often search for "Graham chest combination". 40 moves, 6 plates, one of the longer Old Camp configurations.
+    where: Cartographer Graham's hut left of the Old Camp North Gate, before the first cauldron. Graham sells the colony map and Old Camp map for ore (game8, colony-guide).
+    inside: "A prospector-cartographer's stash: ore, supplies, and useful early-game loot."
+    faq:
+      - q: Where is the hut relative to the gate?
+        a: Left of the North Gate, before the first cauldron. Next to Graham, who trades maps.
+      - q: Why do people search Graham chest combination?
+        a: 40 moves and 6 plates  -  a long lock; text guides rarely give full pin positions and links.
+      - q: How many moves?
+        a: 40 moves (6 plates, 8 links).
+- code: SkCAAjAhAg
+  ru:
+    name: Сундук Граво
+    card: Сундук старателя Граво в Старом лагере - его хижина у входа в замок (Северные ворота), напротив дома Диего; Граво правит репутацию
+  en:
+    name: Gravo's chest
+    card: Digger Gravo's chest in the Old Camp - his hut by the castle entrance near the North Gate, across from Diego's hut; Gravo is the reputation fixer
+- code: Yix4ABIAASCSAE
+  slug: diego-chest
+  ru:
+    name: Сундук Диего
+    card: Сундук Диего в Старом лагере - его хижина юго-восточнее ворот замка, с красной тканью и шкурами у входа; внутри отмычки, эссенция исцеления и руда
+    title: Как открыть сундук Диего в Gothic 1 Remake
+    desc: "Хижина Диего юго-восточнее ворот замка Старого лагеря, с красной тканью и шкурами у входа. 5 эссенций исцеления, 3 отмычки, 22 руды и припасы. Параметры: 6 плиток, 40 ходов, 8 связей. Открой без сломанных отмычек."
+    lead: "Сундук самого узнаваемого NPC серии  -  Диего, Тени, которого встречаешь в первых часах. В гайдах (game8) перечисляют лут: отмычки, эссенции, руда; 40 ходов, 6 плиток."
+    where: Хижина Диего юго-восточнее ворот замка Старого лагеря. Узнаётся по красной ткани и шкурам у входа  -  один из первых ориентиров в лагере.
+    inside: "По гайдам game8: 5 эссенций исцеления, 3 отмычки, 22 руды и припасы  -  отличный ранний тайник."
+    faq:
+      - q: Как найти хижину по внешнему виду?
+        a: Юго-восточнее ворот замка; у входа красная ткань и шкуры. Диего  -  Тень, помогает герою в начале игры.
+      - q: Почему так часто ищут этот замок?
+        a: "«Gothic 1 Remake сундук Диего» и «Diego chest combination»  -  один из самых частых запросов: Диего самый узнаваемый персонаж серии."
+      - q: Сколько ходов?
+        a: 40 ходов (6 плиток, 8 связей).
+  en:
+    name: Diego's chest
+    card: Diego's chest in the Old Camp - his shack southeast of the castle gate, marked by red draping and hides; inside lockpicks, Essence of Healing and ore
+    title: How to open Diego's chest in Gothic 1 Remake
+    desc: "Diego's shack southeast of the Old Camp castle gate, marked by red draping and hides. 5 Essences of Healing, 3 lockpicks, 22 ore and supplies. Stats: 6 plates, 40 moves, 8 links. Open it without breaking lockpicks."
+    lead: "The chest of the series' most recognizable NPC  -  Diego, the Shadow you meet in the first hours. Guides (game8) list the loot: lockpicks, essences, ore; 40 moves, 6 plates."
+    where: Diego's hut southeast of the Old Camp castle gates. Recognizable by the red cloth and hides at the entrance  -  one of the first landmarks in the camp.
+    inside: "Per game8 guides: 5 healing essences, 3 lockpicks, 22 ore, and supplies  -  an excellent early stash."
+    faq:
+      - q: How do I spot the hut?
+        a: Southeast of the castle gates; red cloth and hides at the entrance. Diego is the Shadow who helps you early on.
+      - q: Why is this lock searched so often?
+        a: '"Gothic 1 Remake Diego chest" and "Diego chest combination" are top queries  -  Diego is the most recognizable character in the series.'
+      - q: How many moves?
+        a: 40 moves (6 plates, 8 links).
+- code: aFhwAAABhgAAKY
+  ru:
+    name: Сундук Грима
+    card: Сундук старателя Грима в Старом лагере - рядом с Диего у ворот замка (слева от него); завязан на квест «Амулет»
+  en:
+    name: Grim's chest
+    card: Digger Grim's chest in the Old Camp - next to Diego at the castle gate (to his left); tied to the Amulet quest
+- code: ZA4gEWAAAAASAQ
+  ru:
+    name: Сундук наёмника (у Грима)
+    card: Сундук наёмника слева от Грима в Старом лагере, рядом с Диего у ворот замка
+  en:
+    name: Mercenary's chest (by Grim)
+    card: Mercenary's chest to the left of Grim in the Old Camp, near Diego at the castle gate
+- code: TAmBLEwMAE
+  slug: popular-lock
+  suggest: false
+  ru:
+    name: Популярный замок
+    card: Частый замок из копилки - полный набор связей в коде
+    title: Как открыть популярный замок (5 плиток) в Gothic 1 Remake
+    desc: Один из самых частых замков в копилке UnlockMyLoot - 5 плиток, 46 ходов, полный набор из 10 связей в коде.
+    lead: Популярный замок из копилки игроков - расстановка 7-1-2-2-5, 46 ходов. Ссылка ?lock= несёт все 10 связей; без одной связи решение не сходится.
+    where: Локация в игре пока не опознана - замок добавлен по копилке UnlockMyLoot (сотни открытий). Если узнаете, где он в колонии, напишите.
+    inside: Лут зависит от локации - название уточним, когда замок опознают в игре.
+    faq:
+      - q: Почему «популярный»?
+        a: Одна из самых частых расстановок в копилке. Игроки жаловались, что вручную не хватало одной связи - в коде <code>TAmBLEwMAE</code> все 10 связей уже зашиты.
+      - q: Чем отличается от TAmALEwMAE?
+        a: Та же расстановка штифтов (5.71225), но другой набор связей в коде. Для этого замка нужен именно <code>TAmBLEwMAE</code> (10 связей, 46 ходов).
+      - q: Сколько ходов?
+        a: 46 ходов (5 плиток, 10 связей).
+  en:
+    name: Popular lock
+    card: Frequent lock from the pool - full link set in the code
+    title: How to open the popular lock (5 plates) in Gothic 1 Remake
+    desc: One of the most opened locks in the UnlockMyLoot pool - 5 plates, 46 moves, full set of 10 links in the code.
+    lead: Popular lock from the player pool - pin layout 7-1-2-2-5, 46 moves. The ?lock= URL carries all 10 links; missing one link breaks the solution.
+    where: In-game location not identified yet - added from the UnlockMyLoot pool (hundreds of opens). Let us know if you recognise it in the colony.
+    inside: Loot depends on the location - we will name it once the lock is identified in-game.
+    faq:
+      - q: Why «popular»?
+        a: One of the most frequent pin layouts in the pool. Players reported missing one link when entering manually - code <code>TAmBLEwMAE</code> includes all 10 links.
+      - q: How is this different from TAmALEwMAE?
+        a: Same pin layout (5.71225), different links in the code. This lock needs <code>TAmBLEwMAE</code> specifically (10 links, 46 moves).
+      - q: How many moves?
+        a: 46 moves (5 plates, 10 links).
+- code: ULWBAQhAKg
+  slug: alberto-mine-hut-chest
+  credit:
+    url: https://dtf.ru/id3493234
+    ru:
+      label: Конфигурацию прислала
+      by: nepetacataria · DTF
+    en:
+      label: Config submitted by
+      by: nepetacataria · DTF
+  ru:
+    name: Сундук в хижине шахты Альберто
+    card: 1-й этаж хижины у шахты Альберто
+    title: Как открыть сундук в хижине шахты Альберто в Gothic 1 Remake
+    desc: Сундук на 1-м этаже в хижине у шахты Альберто. 5 плиток, 36 ходов.
+    lead: Сундук в хижине у шахты Альберто - первый этаж. 36 ходов, 5 плиток; один из трёх замков в этой шахте.
+    where: 'Шахта Альберто - сундук в хижине на <strong>1-м этаже</strong>. Наверху по лестнице ещё два: <a href="/locks/alberto-mine-upstairs-left-chest/">левый</a> и <a href="/locks/alberto-mine-upstairs-right-chest/">правый</a> сундуки.'
+    inside: Лут в сундуке на первом этаже хижины у шахты.
+    faq:
+      - q: Где ещё сундуки в шахте?
+        a: Наверху по лестнице - <a href="/locks/alberto-mine-upstairs-left-chest/">левый</a> (20 ходов) и <a href="/locks/alberto-mine-upstairs-right-chest/">правый</a> (13 ходов).
+      - q: Откуда конфигурация?
+        a: Прислала <a href="https://dtf.ru/id3493234">nepetacataria · DTF</a> в <a href="https://dtf.ru/games/5121406-kak-vskryt-zamki-v-gothic-1-remake?comment=65516715">комментарии</a> к гайду по взлому.
+      - q: Сколько ходов?
+        a: 36 ходов (5 плиток, 7 связей).
+  en:
+    name: Chest in Alberto's mine hut
+    card: Ground floor of the hut by Alberto's mine
+    title: How to open the chest in Alberto's mine hut in Gothic 1 Remake
+    desc: Chest on the 1st floor in the hut by Alberto's mine. 5 plates, 36 moves.
+    lead: Chest in the hut by Alberto's mine - ground floor. 36 moves, 5 plates; one of three locks in this mine.
+    where: "Alberto's mine - chest in the hut on the <strong>1st floor</strong>. Up the ladder: <a href=\"/en/locks/alberto-mine-upstairs-left-chest/\">left</a> and <a href=\"/en/locks/alberto-mine-upstairs-right-chest/\">right</a> chests."
+    inside: Loot in the chest on the hut's ground floor by the mine.
+    faq:
+      - q: Any other chests in the mine?
+        a: Up the ladder - <a href="/en/locks/alberto-mine-upstairs-left-chest/">left</a> (20 moves) and <a href="/en/locks/alberto-mine-upstairs-right-chest/">right</a> (13 moves).
+      - q: Where is this config from?
+        a: Submitted by <a href="https://dtf.ru/id3493234">nepetacataria · DTF</a> in a <a href="https://dtf.ru/games/5121406-kak-vskryt-zamki-v-gothic-1-remake?comment=65516715">comment</a> on the lockpicking guide.
+      - q: How many moves?
+        a: 36 moves (5 plates, 7 links).
+- code: MEAIAho
+  slug: alberto-mine-upstairs-left-chest
+  credit:
+    url: https://dtf.ru/id3493234
+    ru:
+      label: Конфигурацию прислала
+      by: nepetacataria · DTF
+    en:
+      label: Config submitted by
+      by: nepetacataria · DTF
+  ru:
+    name: Левый сундук наверху в шахте Альберто
+    card: Наверху по лестнице - левый сундук
+    title: Как открыть левый сундук наверху в шахте Альберто в Gothic 1 Remake
+    desc: Левый сундук наверху по лестнице в шахте Альберто. 4 плитки, 20 ходов.
+    lead: Левый сундук наверху в шахте Альберто - после подъёма по лестнице из хижины. 20 ходов, 4 плитки.
+    where: Шахта Альберто - наверху по лестнице из <a href="/locks/alberto-mine-hut-chest/">хижины (1-й этаж)</a>. Это <strong>левый</strong> сундук; справа - <a href="/locks/alberto-mine-upstairs-right-chest/">отдельный замок</a> (13 ходов).
+    inside: Лут в левом сундуке наверху шахты.
+    faq:
+      - q: Это сундук внизу?
+        a: Нет. Внизу в хижине - <a href="/locks/alberto-mine-hut-chest/">другой сундук</a> (36 ходов).
+      - q: Откуда конфигурация?
+        a: <a href="https://dtf.ru/id3493234">nepetacataria · DTF</a>, <a href="https://dtf.ru/games/5121406-kak-vskryt-zamki-v-gothic-1-remake?comment=65516715">комментарий на DTF</a>.
+      - q: Сколько ходов?
+        a: 20 ходов (4 плитки, 5 связей).
+  en:
+    name: Left chest upstairs in Alberto's mine
+    card: Up the ladder - left chest
+    title: How to open the left chest upstairs in Alberto's mine in Gothic 1 Remake
+    desc: Left chest at the top of the ladder in Alberto's mine. 4 plates, 20 moves.
+    lead: Left chest upstairs in Alberto's mine - after climbing from the hut. 20 moves, 4 plates.
+    where: Alberto's mine - upstairs from the <a href="/en/locks/alberto-mine-hut-chest/">hut (ground floor)</a>. This is the <strong>left</strong> chest; on the right - <a href="/en/locks/alberto-mine-upstairs-right-chest/">a separate lock</a> (13 moves).
+    inside: Loot in the left upstairs chest in the mine.
+    faq:
+      - q: Is this the downstairs chest?
+        a: No. Downstairs in the hut - <a href="/en/locks/alberto-mine-hut-chest/">another chest</a> (36 moves).
+      - q: Where is this config from?
+        a: <a href="https://dtf.ru/id3493234">nepetacataria · DTF</a>, <a href="https://dtf.ru/games/5121406-kak-vskryt-zamki-v-gothic-1-remake?comment=65516715">DTF comment</a>.
+      - q: How many moves?
+        a: 20 moves (4 plates, 5 links).
+- code: UZ1wAFAKxU
+  slug: alberto-mine-upstairs-right-chest
+  credit:
+    url: https://dtf.ru/id3493234
+    ru:
+      label: Конфигурацию прислала
+      by: nepetacataria · DTF
+    en:
+      label: Config submitted by
+      by: nepetacataria · DTF
+  ru:
+    name: Правый сундук наверху в шахте Альберто
+    card: Наверху по лестнице - правый, короткий замок
+    title: Как открыть правый сундук наверху в шахте Альберто в Gothic 1 Remake
+    desc: Правый сундук наверху по лестнице в шахте Альберто. 5 плиток, 13 ходов - короткий замок.
+    lead: Правый сундук наверху в шахте Альберто - всего 13 ходов, один из коротких в каталоге. 5 плиток; слева - <a href="/locks/alberto-mine-upstairs-left-chest/">левый сундук</a> (20 ходов).
+    where: Шахта Альберто - наверху по лестнице. <strong>Правый</strong> сундук; слева <a href="/locks/alberto-mine-upstairs-left-chest/">левый</a>. Внизу в хижине - <a href="/locks/alberto-mine-hut-chest/">сундук 1-го этажа</a>.
+    inside: Лут в правом сундуке наверху.
+    faq:
+      - q: Почему так мало ходов?
+        a: 13 ходов - короткий замок (5 плиток, 10 связей). Левый сундук рядом - 20 ходов.
+      - q: Откуда конфигурация?
+        a: <a href="https://dtf.ru/id3493234">nepetacataria · DTF</a>, <a href="https://dtf.ru/games/5121406-kak-vskryt-zamki-v-gothic-1-remake?comment=65516715">комментарий на DTF</a>.
+      - q: Сколько ходов?
+        a: 13 ходов.
+  en:
+    name: Right chest upstairs in Alberto's mine
+    card: Up the ladder - right chest, short lock
+    title: How to open the right chest upstairs in Alberto's mine in Gothic 1 Remake
+    desc: Right chest at the top of the ladder in Alberto's mine. 5 plates, 13 moves - a short lock.
+    lead: Right chest upstairs in Alberto's mine - only 13 moves, one of the shorter locks in the catalog. 5 plates; on the left - <a href="/en/locks/alberto-mine-upstairs-left-chest/">left chest</a> (20 moves).
+    where: Alberto's mine - upstairs by the ladder. <strong>Right</strong> chest; on the left the <a href="/en/locks/alberto-mine-upstairs-left-chest/">left chest</a>. Downstairs in the hut - <a href="/en/locks/alberto-mine-hut-chest/">ground-floor chest</a>.
+    inside: Loot in the right upstairs chest.
+    faq:
+      - q: Why so few moves?
+        a: 13 moves - a short lock (5 plates, 10 links). The left chest nearby is 20 moves.
+      - q: Where is this config from?
+        a: <a href="https://dtf.ru/id3493234">nepetacataria · DTF</a>, <a href="https://dtf.ru/games/5121406-kak-vskryt-zamki-v-gothic-1-remake?comment=65516715">DTF comment</a>.
+      - q: How many moves?
+        a: 13 moves.
+- code: cuaSQAAQgoQJQA
+  slug: cavalorn-storeroom-door
+  credit:
+    url: https://dtf.ru/id3493234
+    ru:
+      label: Конфигурацию прислала
+      by: nepetacataria · DTF
+    en:
+      label: Config submitted by
+      by: nepetacataria · DTF
+  ru:
+    name: Дверь на склад охотника Кавалорна
+    card: Склад охотника Кавалорна
+    title: Как открыть дверь на склад охотника Кавалорна в Gothic 1 Remake
+    desc: "Дверь на склад охотника Кавалорна в Gothic 1 Remake: где находится, что внутри, стартовые штифты и готовая конфигурация на 6 плиток, 41 ход и 10 связей."
+    lead: Дверь на склад охотника Кавалорна - 41 ход, 6 плиток. Отдельный замок у охотника, не путать с шахтой Альберто.
+    where: Лагерь охотников - дверь на <strong>склад Кавалорна</strong> (охотник). Не сундуки в <a href="/locks/alberto-mine-hut-chest/">шахте Альберто</a>.
+    inside: Склад охотника Кавалорна - припасы и лут за дверью.
+    faq:
+      - q: Это шахта Альберто?
+        a: Нет. Три сундука в шахте Альберто - отдельные карточки в каталоге (<a href="/locks/alberto-mine-hut-chest/">хижина</a>, <a href="/locks/alberto-mine-upstairs-left-chest/">левый</a>, <a href="/locks/alberto-mine-upstairs-right-chest/">правый</a>).
+      - q: Откуда конфигурация?
+        a: <a href="https://dtf.ru/id3493234">nepetacataria · DTF</a>, <a href="https://dtf.ru/games/5121406-kak-vskryt-zamki-v-gothic-1-remake?comment=65516715">комментарий на DTF</a>.
+      - q: Сколько ходов?
+        a: 41 ход (6 плиток, 10 связей).
+  en:
+    name: Hunter Cavalorn's storeroom door
+    card: Hunter Cavalorn's storeroom
+    title: How to open hunter Cavalorn's storeroom door in Gothic 1 Remake
+    desc: "Hunter Cavalorn's storeroom door in Gothic 1 Remake: location, loot note, starting pins, and a ready solver configuration for 6 plates, 41 moves, and 10 links."
+    lead: Door to hunter Cavalorn's storeroom - 41 moves, 6 plates. A separate lock at the hunter's camp, not Alberto's mine.
+    where: Hunters' camp - door to <strong>Cavalorn's storeroom</strong>. Not the chests in <a href="/en/locks/alberto-mine-hut-chest/">Alberto's mine</a>.
+    inside: Cavalorn's storeroom - supplies and loot behind the door.
+    faq:
+      - q: Is this Alberto's mine?
+        a: No. The three chests in Alberto's mine are separate catalog entries (<a href="/en/locks/alberto-mine-hut-chest/">hut</a>, <a href="/en/locks/alberto-mine-upstairs-left-chest/">left</a>, <a href="/en/locks/alberto-mine-upstairs-right-chest/">right</a>).
+      - q: Where is this config from?
+        a: <a href="https://dtf.ru/id3493234">nepetacataria · DTF</a>, <a href="https://dtf.ru/games/5121406-kak-vskryt-zamki-v-gothic-1-remake?comment=65516715">DTF comment</a>.
+      - q: How many moves?
+        a: 41 moves (6 plates, 10 links).
+- code: cOEMSCgBGIQAAA
+  slug: old-to-new-camp-bandits-chest
+  credit:
+    url: https://dtf.ru/id3493234
+    ru:
+      label: Конфигурацию прислала
+      by: nepetacataria · DTF
+    en:
+      label: Config submitted by
+      by: nepetacataria · DTF
+  ru:
+    name: Сундук у разбойников на пути в Новый лагерь
+    card: Двое разбойников на тропе Старый → Новый лагерь
+    title: Как открыть сундук у разбойников на пути в Новый лагерь в Gothic 1 Remake
+    desc: Сундук у двоих разбойников на тропе из Старого лагеря в Новый. 6 плиток, 33 хода. Можно облутать, не подходя к ним.
+    lead: "Сундук рядом с двумя разбойниками на пути из Старого лагеря в Новый - 33 хода. К ним можно не подходить: подойти к сундуку и взломать отдельно."
+    where: Тропа <strong>из Старого лагеря в Новый</strong> - стоят двое разбойников (при разговоре хотят ограбить). Сундук рядом; можно обойти и взломать, не заговаривая.
+    inside: Лут в сундуке у разбойников на дороге между лагерями.
+    faq:
+      - q: Обязательно драться?
+        a: Нет - можно не подходить к разбойникам и просто взломать сундук.
+      - q: Это путь в Старый лагерь?
+        a: "Нет, наоборот: из <strong>Старого</strong> в <strong>Новый</strong> лагерь (исправление от автора конфигурации)."
+      - q: Откуда конфигурация?
+        a: <a href="https://dtf.ru/id3493234">nepetacataria · DTF</a>, <a href="https://dtf.ru/games/5121406-kak-vskryt-zamki-v-gothic-1-remake?comment=65516715">комментарий на DTF</a>.
+      - q: Сколько ходов?
+        a: 33 хода (6 плиток, 9 связей).
+  en:
+    name: Chest by bandits on the path to the New Camp
+    card: Two bandits on the Old → New Camp trail
+    title: How to open the chest by bandits on the path to the New Camp in Gothic 1 Remake
+    desc: Chest by two bandits on the trail from the Old Camp to the New Camp. 6 plates, 33 moves. Can be looted without talking to them.
+    lead: Chest next to two bandits on the path from the Old Camp to the New Camp - 33 moves. You can skip talking to them and pick the chest separately.
+    where: Trail <strong>from the Old Camp to the New Camp</strong> - two bandits (they want to rob you if you talk). Chest nearby; walk up and pick it without engaging.
+    inside: Loot in the chest by the bandits on the road between camps.
+    faq:
+      - q: Do I have to fight?
+        a: No - you can avoid the bandits and just pick the chest.
+      - q: Is this the path to the Old Camp?
+        a: "No - the other way: from the <strong>Old</strong> to the <strong>New</strong> Camp (author correction)."
+      - q: Where is this config from?
+        a: <a href="https://dtf.ru/id3493234">nepetacataria · DTF</a>, <a href="https://dtf.ru/games/5121406-kak-vskryt-zamki-v-gothic-1-remake?comment=65516715">DTF comment</a>.
+      - q: How many moves?
+        a: 33 moves (6 plates, 9 links).
