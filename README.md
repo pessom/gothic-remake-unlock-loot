@@ -8,7 +8,7 @@
 
 [**unlockmyloot.com →**](https://unlockmyloot.com) · [English](https://unlockmyloot.com/en/) · [Каталог замков](https://unlockmyloot.com/locks/)
 
-![Один файл](https://img.shields.io/badge/%D1%81%D0%B0%D0%B9%D1%82-index.html-34a883?style=for-the-badge)
+![Без сборки](https://img.shields.io/badge/%D1%81%D0%B1%D0%BE%D1%80%D0%BA%D0%B0-%D0%BD%D0%B5%20%D0%BD%D1%83%D0%B6%D0%BD%D0%B0-34a883?style=for-the-badge)
 ![Без зависимостей](https://img.shields.io/badge/%D0%B7%D0%B0%D0%B2%D0%B8%D1%81%D0%B8%D0%BC%D0%BE%D1%81%D1%82%D0%B8-%D0%BD%D0%B5%D1%82-101214?style=for-the-badge)
 ![Vanilla JS](https://img.shields.io/badge/vanilla-JS-2a4a3d?style=for-the-badge)
 
@@ -57,8 +57,10 @@ UnlockMyLoot перебирает все состояния замка и выд
 
 ```
 site/               корень сайта: публикуется целиком
-  index.html          решатель RU (разметка, стили, UI, мастер связей)
-  en/index.html       решатель EN
+  index.html          решатель RU: разметка и тексты страницы
+  en/index.html       решатель EN: разметка и тексты страницы
+  assets/             общий код RU и EN: app.css, solver.js (ядро), app.js (интерфейс, мастер,
+                      плеер), i18n.ru.js / i18n.en.js (тексты интерфейса и склонения)
   locks/              стили и фон страниц замков (lock-page.css/js)
   404.html, robots.txt, иконки, og.png, CNAME
 locks.yaml          каталог замков - единственный источник списка

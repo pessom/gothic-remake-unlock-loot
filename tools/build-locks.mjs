@@ -6,7 +6,7 @@
    - locks/index.html, en/locks/index.html - каталог из tools/templates/catalog.*.html
    - sitemap.xml
    Замок в locks.yaml записан явно (pins + links, см. tools/lock-format.mjs); код для ссылок
-   ?lock= и число ходов (решателем из site/index.html) считаются здесь.
+   ?lock= и число ходов (решателем из site/assets/solver.js) считаются здесь.
    Запуск: npm run build:locks */
 import { readFileSync, writeFileSync, mkdirSync, rmSync, readdirSync } from 'fs';
 import { join } from 'path';
@@ -23,11 +23,11 @@ const LANGS = ['ru', 'en'];
 /* ---------- данные ---------- */
 const LOCKS = YAML.parse(readFileSync(join(ROOT, 'locks.yaml'), 'utf8'));
 
-/* решатель берём из index.html, чтобы ходы в каталоге совпадали с сайтом */
+/* решатель - тот же файл, что на сайте, чтобы ходы в каталоге совпадали */
 function loadSolver() {
-  const html = readFileSync(join(SITE_DIR, 'index.html'), 'utf8');
+  const html = readFileSync(join(SITE_DIR, 'assets/solver.js'), 'utf8');
   const m = html.match(/\/\* solver-start[\s\S]*?\/\* solver-end \*\//);
-  if (!m) throw new Error('site/index.html: не найдены маркеры solver-start/solver-end');
+  if (!m) throw new Error('site/assets/solver.js: не найдены маркеры solver-start/solver-end');
   const ctx = {};
   vm.createContext(ctx);
   vm.runInContext(m[0] + '; this.solveLock = solveLock;', ctx);

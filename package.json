@@ -6,7 +6,7 @@
   "scripts": {
     "build:locks": "node tools/build-locks.mjs",
     "lock": "node tools/lock-from-code.mjs",
-    "test": "node tests/sol-test.mjs && node tests/wiz-test.mjs && node tests/link-test.mjs && node tests/suggest-test.mjs",
+    "test": "node tests/sol-test.mjs && node tests/wiz-test.mjs && node tests/link-test.mjs && node tests/suggest-test.mjs && node tests/i18n-test.mjs",
     "serve": "npm run build:locks && python3 -m http.server 8000 -d site"
   },
   "devDependencies": {

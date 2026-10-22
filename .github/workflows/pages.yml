@@ -34,6 +34,10 @@ jobs:
           npm ci
           npm run build:locks
 
+      # общие assets/*.css|js: ?v=dev -> короткий хеш коммита, чтобы браузер не держал старый код
+      - name: Cache-busting for shared assets
+        run: sed -i "s/?v=dev/?v=${GITHUB_SHA::8}/g" site/index.html site/en/index.html
+
       - name: Enable and configure Pages
         uses: actions/configure-pages@v5
         with:
