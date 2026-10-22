@@ -35,7 +35,7 @@ const rnd = () => ((seed = (seed * 1103515245 + 12345) & 0x7fffffff) / 0x8000000
 const ABC = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_';
 function CODE_ABC_FLIP(code) { return ABC[ABC.indexOf(code[0]) | 4] + code.slice(1); }
 
-for (const file of ['site/index.html', 'site/en/index.html']) {
+for (const file of ['site/assets/app.js']) {
   const ctx = loadCodec(file);
   let maxLen = 0;
   for (let t = 0; t < 2000; t++) {

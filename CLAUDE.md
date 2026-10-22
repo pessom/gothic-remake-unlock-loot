@@ -4,7 +4,8 @@
 
 ## Где что
 
-- `site/` — корень сайта, выкладывается целиком. `site/index.html` и `site/en/index.html` — решатель RU и EN: **логика продублирована, правки вносить в оба файла**.
+- `site/` — корень сайта, выкладывается целиком. `site/index.html` и `site/en/index.html` — разметка и тексты страницы RU и EN (правки разметки — в оба файла). Код общий, в `site/assets/`: `app.css`, `solver.js` (ядро), `app.js` (интерфейс, мастер, плеер).
+- Тексты интерфейса в `app.js` — русские фразы в `T('…')`, перевод — в `site/assets/i18n.en.js`, склонения — `plural()`. Новая фраза: обернуть в `T()` и добавить перевод (`tests/i18n-test.mjs` проверит). Функция называется `T`, а не `t`: локальные `t` в коде её перекрыли бы.
 - `locks.yaml` — единственный источник каталога замков (`pins` + `links`). Собранное (`site/locks/*`, `site/en/locks/`, `site/sitemap.xml`) в git не хранится.
 - `tools/build-locks.mjs` — генератор каталога, `tools/lock-format.mjs` — pins/links ↔ код ссылки, `tools/templates/` — шаблоны каталога.
 - `worker/` — Cloudflare Worker. `id` KV в `worker/wrangler.toml` не менять.
@@ -22,7 +23,8 @@ npm run lock -- <код>  # код ?lock= с сайта -> pins/links для loc
 
 ## Что нельзя ломать
 
-- Маркеры `solver-start`/`solver-end` и `wiz-core-start`/`wiz-core-end` в `site/index.html`: по ним тесты и генератор вырезают код.
+- Маркеры `solver-start`/`solver-end` (`site/assets/solver.js`) и `wiz-core-start`/`wiz-core-end` (`site/assets/app.js`): по ним тесты и генератор вырезают код.
+- Подключения `assets/…?v=dev` в HTML: CI заменяет `dev` на хеш коммита для сброса кэша.
 - Связи из подсказки — только ожидание: мастер обязан сверить их пробой. Подсказка ищется по исходным штифтам (`lockBasePins()`).
 - Бит порядка строк в коде замка всегда 0; ссылки `?lock=` не меняют порядок плиток.
 - Сайт работает без API: обращения к воркеру — в фоне с `.catch`, интерфейс их не ждёт.

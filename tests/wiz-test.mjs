@@ -9,7 +9,7 @@ import { resolve } from 'node:path';
 // файлы из аргументов - относительно текущей папки, по умолчанию - сайт от корня репозитория
 const files = process.argv.slice(2).map((f) => resolve(f));
 process.chdir(new URL('..', import.meta.url).pathname);
-if (!files.length) files.push('site/index.html', 'site/en/index.html');
+if (!files.length) files.push('site/assets/app.js');
 
 function loadCore(file) {
   const html = readFileSync(file, 'utf8');

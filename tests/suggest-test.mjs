@@ -6,7 +6,7 @@ import vm from 'node:vm';
 // пути к сайту - от корня репозитория, откуда бы ни запускали
 process.chdir(new URL('..', import.meta.url).pathname);
 
-function loadSuggest(file) {
+function loadSuggest(file, lang) {
   const html = readFileSync(file, 'utf8');
   const grab = (re) => {
     const m = html.match(re);
@@ -25,6 +25,7 @@ function loadSuggest(file) {
     N: 0, pins: [], link: [], FLIP: false, pinsTouched: false,
     WIZ_MEM: { zero: null, base: null },
     SUGGESTED_CODE: null,
+    I18N: { lang, strings: {} },
     // как locks/locks-data.js: Скатти + безымянная расстановка с suggest: false
     window: { UML_LOCKS: [
       { code: 'SojAgCBDQA', fp: '5.63217', slug: 'scatty-chest', ru: { name: 'Сундук Скатти' }, en: { name: "Scatty's chest" } },
@@ -54,8 +55,10 @@ function loadSuggest(file) {
   return ctx;
 }
 
-for (const file of ['site/index.html', 'site/en/index.html']) {
-  const ctx = loadSuggest(file);
+// код общий для RU и EN; от языка зависит только имя замка в подсказке
+for (const lang of ['ru', 'en']) {
+  const file = 'site/assets/app.js [' + lang + ']';
+  const ctx = loadSuggest('site/assets/app.js', lang);
 
   // encodeConfig(base) не включает сдвинутые штифты
   ctx.N = 4;
@@ -115,7 +118,7 @@ for (const file of ['site/index.html', 'site/en/index.html']) {
   ctx.pins = [6, 3, 2, 1, 7];
   ctx.WIZ_MEM.base = null;
   const k = ctx.knownLockFor();
-  if (!k || k.code !== 'SojAgCBDQA' || !/Скатти|Scatty/.test(k.name)) throw new Error(file + ': known lock by pins not found');
+  if (!k || k.code !== 'SojAgCBDQA' || k.name !== (lang === 'ru' ? 'Сундук Скатти' : "Scatty's chest")) throw new Error(file + ': known lock by pins not found');
   ctx.WIZ_MEM.base = [6, 3, 2, 1, 6]; // пробы сдвинули штифты в расстановку Скатти - это другой замок
   if (ctx.knownLockFor()) throw new Error(file + ': must not match by shifted pins');
   ctx.WIZ_MEM.base = null;
