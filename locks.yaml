@@ -3,10 +3,13 @@
 #   - подсказка связей в решателе (по совпадению стартовых штифтов);
 #   - карточки каталога /locks/ и /en/locks/;
 #   - страницы замков /locks/<slug>/ и /en/locks/<slug>/, sitemap.xml.
-# Число плиток, штифты, ходы и связи считаются автоматически по коду замка.
+# Код для ссылок ?lock=..., число ходов и связей генератор считает сам из pins и links.
 #
 # Поля замка:
-#   code      код из ссылки ?lock=... (обязательно)
+#   pins      стартовые позиции штифтов 1..7 по плиткам 1..N, например [6, 3, 2, 1, 7] (обязательно)
+#   links     связи: «плитка: кто едет вместе с ней», +N - в ту же сторону, -N - в противоположную,
+#             например «4: +2 -3 -5»; плитки без связей не пишутся, нет связей совсем - links: {}
+#             Перевести код с сайта в pins/links: npm run lock -- <код или ссылка ?lock=...>
 #   slug      адрес страницы замка; без slug - только карточка в каталоге
 #   aliases   старые адреса страницы - с них будет редирект на slug
 #   suggest   false - не подсказывать связи в решателе по штифтам
@@ -19,8 +22,13 @@
 # В текстах можно HTML (ссылки <a href>). Двойные кавычки в title/desc/card - нельзя, используй «ёлочки».
 # Порядок замков = порядок карточек в каталоге.
 
-- code: aUkAACUBAAJikA
-  slug: ruined-tower-door
+- slug: ruined-tower-door
+  pins: [5, 6, 2, 2, 1, 1]
+  links:
+    2: -3 +4 +5
+    3: +4
+    5: -1 +2 -3 -6
+    6: -1 +2
   ru:
     name: Дверь Разрушенной башни
     card: Дверь у основания Разрушенной башни рядом со Старым лагерем
@@ -51,10 +59,15 @@
         a: The shortest safe path is 57 moves (6 plates, 10 links). The solver shows them step by step.
       - q: What if my pin positions differ?
         a: You have a different lock instance. Enter your pins in the solver  -  it will find a path for your layout.
-- code: SojAgCBDQA
-  slug: scatty-chest
+- slug: scatty-chest
   aliases:
     - sketty-chest
+  pins: [6, 3, 2, 1, 7]
+  links:
+    1: +4
+    2: +5
+    3: -5
+    4: +2 -3 -5
   ru:
     name: Сундук Скатти
     card: Сундук Скатти с кольцом для Фингерса - квест «Кольцо для Фингерса»
@@ -85,8 +98,12 @@
         a: Yes  -  the ring for the same-named quest. Scatty lives in the Old Camp; the chest is tied to Fingers' assignment.
       - q: How many moves?
         a: The shortest safe path is 31 moves (5 plates, 6 links).
-- code: LagFFgA
-  slug: cor-galom-chest
+- slug: cor-galom-chest
+  pins: [7, 7, 6, 1]
+  links:
+    1: +4
+    2: +1 +4
+    3: +1 -2
   ru:
     name: Сундук Кор Галома
     card: Рецепт для квеста Декстера - между лабораторными столами на первом этаже
@@ -117,8 +134,13 @@
         a: No. The recipe is in the chest between tables on the ground floor (<code>LagFFgA</code>). The bedroom upstairs has a different lock with a purification ring and other loot.
       - q: How many moves?
         a: 15 moves - the catalog's shortest record.
-- code: a2YMQAAIiECEAA
-  slug: cor-galom-bedroom-chest
+- slug: cor-galom-bedroom-chest
+  pins: [6, 6, 5, 7, 1, 4]
+  links:
+    1: +3
+    3: -2 -5
+    4: -1 +3
+    5: -2 +4
   ru:
     name: Сундук в спальне Кор Галома
     card: Спальня на втором этаже - кольцо очищения, свиток пиромантии и алхимический лут
@@ -149,8 +171,14 @@
         a: Fire protection +5, wind +3, ice +3, energy +3.
       - q: How many moves?
         a: 60 moves (6 plates, 7 links). The solver shows the path step by step.
-- code: YQY0gBgAAGACIE
-  slug: swamp-camp-forge-chest
+- slug: swamp-camp-forge-chest
+  pins: [1, 5, 1, 7, 2, 6]
+  links:
+    1: -3
+    2: +3 -4
+    4: +3 -5
+    5: -6
+    6: -2 +5
   ru:
     name: Сундук в кузнице Болотного лагеря
     card: Кузница Болотного лагеря - одноручный топор на 29 урона и материалы
@@ -181,8 +209,14 @@
         a: In the Swamp Camp itself - a separate forge building, not Cor Galom's laboratory.
       - q: How many moves?
         a: 41 moves (6 plates, 8 links). The solver shows the path step by step.
-- code: RY2VUBQAiA
-  slug: rice-lord-storeroom
+- slug: rice-lord-storeroom
+  pins: [3, 7, 2, 6, 5]
+  links:
+    1: -2 -3 -4 -5
+    2: -1
+    3: -1 -2
+    4: +3
+    5: +1
   ru:
     name: Склад Рисового лорда (3-й этаж)
     card: Дверь на 3-м этаже над рисовыми полями - на 2-м другой замок
@@ -213,8 +247,14 @@
         a: Rice Lord's key or a lockpick. The Rice Lord is a New Camp NPC overseeing the fields.
       - q: How many moves?
         a: 30 moves (5 plates, 9 links).
-- code: YiNAIJpEEAiAAA
-  slug: gomez-chambers-door
+- slug: gomez-chambers-door
+  pins: [2, 1, 5, 4, 3, 1]
+  links:
+    1: -4
+    2: -1 +3 -4 -5 +6
+    3: +2 +6
+    4: -6
+    5: -2
   ru:
     name: Дверь в покои Гомеза
     card: Дверь в покои Гомеза в замке Старого лагеря
@@ -241,8 +281,12 @@
         a: No. The chest at Gomez's feet is a separate lock (<code>SgjQQDUgCI</code>, 68 moves). This is the chamber door.
       - q: How many moves?
         a: 28 moves (6 plates, 10 links).
-- code: IIAKWgA
-  slug: gomez-throne-hall-chest
+- slug: gomez-throne-hall-chest
+  pins: [1, 3, 1, 1]
+  links:
+    1: -4
+    2: -1 +3 +4
+    3: -1 -2
   ru:
     name: Сундук в тронном зале у Гомеза
     card: Справа от Гомеза - чертёж королевского оружия, кража не считается
@@ -273,8 +317,14 @@
         a: No. Gomez's chambers are behind a separate door (<a href="/en/locks/gomez-chambers-door/">chamber door</a>). This chest is in the throne hall next to the boss.
       - q: How many moves?
         a: 16 moves (4 plates, 6 links) - one of the shorter locks in the catalog.
-- code: YMTCAKIgIEBiAA
-  slug: old-camp-dungeon-door
+- slug: old-camp-dungeon-door
+  pins: [1, 4, 1, 5, 7, 1]
+  links:
+    1: -2
+    2: -1 -3 -5
+    3: -1 -6
+    4: +3
+    5: +2 -3 -6
   ru:
     name: Дверь в темнице с расстрелянным призраком
     card: Вход в темницу под замком - расстрелянный призрак, квест Арлин
@@ -305,8 +355,16 @@
         a: Bar the Truth from Brannok. Gomez's dungeon key also works, but lockpicking is fine.
       - q: How many moves?
         a: 68 moves (6 plates, 10 links). Plate 2 is already centred.
-- code: gBDXAECQhAAQAQAIRAA
-  slug: arlin-dungeon-key
+- slug: arlin-dungeon-key
+  pins: [1, 1, 3, 1, 7, 6, 7]
+  links:
+    1: -6
+    2: +3 -5 +7
+    3: -4
+    4: -5
+    5: -4
+    6: +4
+    7: -1 -3
   ru:
     name: Ключ от темницы Арлина
     card: Камера Арлина в темнице - ключ у стражника или взлом
@@ -337,8 +395,14 @@
         a: You can loot it from the warder by the cells. Or pick the lock - 25 moves, shorter than the entrance door.
       - q: How many moves?
         a: 25 moves (7 plates, 10 links).
-- code: bI02qgAAIBgEAg
-  slug: gomez-wine-cellar
+- slug: gomez-wine-cellar
+  pins: [7, 3, 2, 6, 2, 6]
+  links:
+    1: -2 -3 -4 -5 -6
+    3: -6
+    4: +5 -6
+    5: +4
+    6: -4
   ru:
     name: Винный погреб Гомеза
     card: Склад под Гомезом - дверь внизу вертикальной лестницы
@@ -369,8 +433,13 @@
         a: In the Old Camp castle - climb down to the storeroom under Gomez; the lock is on the door at the bottom.
       - q: How many moves?
         a: 31 moves (6 plates, 10 links).
-- code: SgjQQDUgCI
-  slug: gomez-bedside-chest
+- slug: gomez-bedside-chest
+  pins: [6, 1, 2, 1, 7]
+  links:
+    1: -2 -5
+    2: +5
+    3: -1 -2 -4 +5
+    5: +1 +3
   credit:
     ru:
       label: Конфигурацию нашёл
@@ -408,8 +477,14 @@
         a: At the foot of Gomez's bed, in his room in the Old Camp castle.
       - q: Where did this config come from?
         a: Found and submitted by Vlad from DTF (<a href="https://dtf.ru/id644393">dtf.ru/id644393</a>), verified in-game and in the solver.
-- code: ZDAkKqACQECQAA
-  slug: gomez-wall-chest
+- slug: gomez-wall-chest
+  pins: [3, 1, 7, 1, 2, 2]
+  links:
+    1: -4 -5 -6
+    2: -1 -3
+    3: -4 +5
+    4: +3
+    5: -2 +3
   ru:
     name: Сундук у стены в покоях Гомеза
     card: Сундук у стены - со стороны комнаты Ворона, рекорд каталога
@@ -440,8 +515,13 @@
         a: Gomez's bedside chest is a different code (<code>SgjQQDUgCI</code>, 68 moves). This wall chest is <code>ZDAkKqACQECQAA</code>, 75 moves.
       - q: How many moves?
         a: 75 moves - catalog record (6 plates, 10 links).
-- code: jV46BEAAIAAAJLASAAA
-  slug: voran-bedside-chest
+- slug: voran-bedside-chest
+  pins: [7, 6, 4, 7, 2, 7, 5]
+  links:
+    1: -4 -6
+    3: +1
+    5: +1 -3 +4 +6 -7
+    6: -4 +5
   ru:
     name: Сундук у кровати Ворона
     card: Первый замок на 7 плиток - ключ от башни Ворона
@@ -472,8 +552,13 @@
         a: "Opens the door at Voran's feet without lockpicking. Beyond it: Raven Tower's first floor with 9 chests; the catalog has the <a href=\"/en/locks/raven-tower-left-chest/\">left</a> and <a href=\"/en/locks/raven-tower-right-chest/\">right</a> chests by the entrance so far."
       - q: How many moves?
         a: 38 moves (7 plates, 10 links).
-- code: TbYwABSyBC
-  slug: arto-room-door
+- slug: arto-room-door
+  pins: [7, 7, 7, 7, 2]
+  links:
+    1: -2
+    3: -1 -2 +4 +5
+    4: -1 +2
+    5: -2 +4
   ru:
     name: Дверь в комнату Арто
     card: Комната Арто слева в покоях Гомеза - напротив Ворона
@@ -500,8 +585,14 @@
         a: No. Voran is on the right (<a href="/en/locks/voran-bedside-chest/">his bedside chest</a>, 7 plates). Arto is on the left - this door.
       - q: How many moves?
         a: 31 moves (5 plates, 9 links).
-- code: ZpEUEAAAgASIAk
-  slug: arto-far-bed-chest
+- slug: arto-far-bed-chest
+  pins: [4, 3, 3, 2, 1, 6]
+  links:
+    1: +4
+    3: -5
+    4: +6
+    5: -2 -4
+    6: -4 +5
   ru:
     name: Сундук у дальней кровати Арто
     card: Дальняя кровать - кольцо защиты от оружия, экстракты
@@ -533,8 +624,13 @@
         a: Through the <a href="/en/locks/arto-room-door/">door to Arto's room</a> or via Gomez's chambers after the <a href="/en/locks/gomez-chambers-door/">chamber door</a>.
       - q: How many moves?
         a: 40 moves (6 plates, 7 links).
-- code: Y2WYAEGAAIGEAY
-  slug: arto-near-bed-chest
+- slug: arto-near-bed-chest
+  pins: [2, 6, 5, 6, 5, 7]
+  links:
+    2: +1 +5 -6
+    4: -3
+    5: +1 -2 +4
+    6: +4 -5
   ru:
     name: Сундук у ближней кровати Арто
     card: Ближняя кровать - кольцо мощи, руда, 52 хода
@@ -566,8 +662,14 @@
         a: At the far bed - <a href="/en/locks/arto-far-bed-chest/">weapon protection ring chest</a> (40 moves).
       - q: How many moves?
         a: 52 moves (6 plates, 9 links).
-- code: YHayiAREIAIABE
-  slug: gomez-bedrooms-door
+- slug: gomez-bedrooms-door
+  pins: [1, 2, 7, 7, 6, 5]
+  links:
+    1: -2 -3 -5
+    2: +4 +6
+    3: +2 -6
+    5: -1
+    6: +3 +5
   ru:
     name: Дверь на этаже спален покоев
     card: Первая дверь на этаже спален - комната с двумя сундуками
@@ -594,8 +696,14 @@
         a: No. Voran is on the right, Arto on the left - they have their own doors. This is a different door on the same bedrooms floor.
       - q: How many moves?
         a: 45 moves (6 plates, 10 links).
-- code: RzbBFITEQQ
-  slug: gomez-bedrooms-far-chest
+- slug: gomez-bedrooms-far-chest
+  pins: [4, 5, 7, 7, 7]
+  links:
+    1: -4
+    2: -1 -3 +4
+    3: -2 +4 -5
+    4: -2 -5
+    5: -3
   ru:
     name: Сундук у дальней кровати (этаж спален)
     card: Дальняя кровать - кольцо рудной кожи, экстракты, алкоголь
@@ -626,8 +734,13 @@
         a: Through the <a href="/en/locks/gomez-bedrooms-door/">door on the bedrooms floor</a> in Gomez's chambers.
       - q: How many moves?
         a: 39 moves (5 plates, 10 links). Plate 1 is already centred.
-- code: ZVbYAEKEBgECAA
-  slug: gomez-bedrooms-near-chest
+- slug: gomez-bedrooms-near-chest
+  pins: [3, 6, 3, 7, 7, 7]
+  links:
+    2: +1 -5 -6
+    3: +2
+    4: +1 -2
+    5: +1 -6
   ru:
     name: Сундук у ближней кровати (этаж спален)
     card: Ближняя кровать - кольцо великой жизненной силы, 56 ходов
@@ -658,8 +771,13 @@
         a: At the far bed - <a href="/en/locks/gomez-bedrooms-far-chest/">ore skin ring chest</a> (39 moves).
       - q: How many moves?
         a: 56 moves (6 plates, 8 links).
-- code: bVyMKQAAGQAAWA
-  slug: raven-tower-left-chest
+- slug: raven-tower-left-chest
+  pins: [7, 6, 4, 5, 5, 4]
+  links:
+    1: -4 -5 +6
+    3: +6
+    4: -1 +2
+    6: +1 +2 -3
   ru:
     name: Левый сундук в башне Ворона
     card: 1-й этаж башни, слева у входа - 2 из 9 сундуков в каталоге
@@ -690,8 +808,13 @@
         a: No. The tower key is in <a href="/en/locks/voran-bedside-chest/">Voran's bedside chest</a>.
       - q: How many moves?
         a: 35 moves (6 plates, 9 links).
-- code: bEhYigAEVCQEAA
-  slug: raven-tower-right-chest
+- slug: raven-tower-right-chest
+  pins: [7, 2, 2, 1, 3, 7]
+  links:
+    1: -3 -5 -6
+    3: +2 +5 +6
+    4: +1 -5 +6
+    5: +4
   ru:
     name: Правый сундук в башне Ворона
     card: 1-й этаж башни, справа у входа - 2 из 9 сундуков в каталоге
@@ -718,8 +841,13 @@
         a: Nine. The catalog has two by the entrance so far - the <a href="/en/locks/raven-tower-left-chest/">left chest</a> and this one. The other seven as codes come in.
       - q: How many moves?
         a: 23 moves (6 plates, 10 links).
-- code: YqahUKAAACIIAA
-  slug: raven-tower-floor2-stairs-chest
+- slug: raven-tower-floor2-stairs-chest
+  pins: [2, 3, 5, 7, 6, 1]
+  links:
+    1: +2 +3 +4
+    2: -1 -3
+    4: -5
+    5: -1 -4
   ru:
     name: Сундук у лестницы (2-й этаж башни)
     pageName: Сундук у лестницы на 2-м этаже башни Ворона
@@ -748,8 +876,14 @@
         a: Same floor - <a href="/en/locks/raven-tower-floor2-chest-2/">second chest</a>.
       - q: How many moves?
         a: 48 moves (6 plates, 8 links).
-- code: Q6XCAhAglI
-  slug: raven-tower-floor2-chest-2
+- slug: raven-tower-floor2-chest-2
+  pins: [2, 7, 5, 6, 7]
+  links:
+    1: +3
+    2: +3
+    3: -1 +5
+    4: +3
+    5: -1 -2 +3
   ru:
     name: Второй сундук на 2-м этаже башни
     pageName: Второй сундук на 2-м этаже башни Ворона
@@ -773,8 +907,13 @@
     faq:
       - q: How many moves?
         a: 27 moves (5 plates, 8 links).
-- code: QmzSSoBAAg
-  slug: raven-tower-floor3-entrance-chest
+- slug: raven-tower-floor3-entrance-chest
+  pins: [2, 2, 6, 5, 7]
+  links:
+    1: -2 +3 -5
+    2: +1 +3 +4
+    3: -5
+    5: +2
   ru:
     name: Сундук у входа (3-й этаж башни)
     pageName: Сундук у входа на 3-м этаже башни Ворона
@@ -803,8 +942,13 @@
         a: Yes - the <a href="/en/locks/raven-tower-floor3-empty-chest/">empty chest</a> nearby.
       - q: How many moves?
         a: 44 moves (5 plates, 8 links).
-- code: RYIBEylAIA
-  slug: raven-tower-floor3-empty-chest
+- slug: raven-tower-floor3-empty-chest
+  pins: [3, 7, 1, 3, 1]
+  links:
+    1: -4
+    2: -1 +3 -4 +5
+    3: +1 -4 -5
+    4: +5
   ru:
     name: Пустой сундук (3-й этаж башни)
     pageName: Пустой сундук на 3-м этаже башни Ворона
@@ -829,8 +973,15 @@
     faq:
       - q: How many moves?
         a: 37 moves (5 plates, 9 links).
-- code: h24ZgUAAEAQgAwAKQAA
-  slug: raven-tower-floor4-elixirs-chest
+- slug: raven-tower-floor4-elixirs-chest
+  pins: [4, 6, 6, 7, 1, 7, 4]
+  links:
+    1: -5 -6
+    3: -2
+    4: -1 +3
+    5: +3 -4
+    6: +4 +5
+    7: -1
   ru:
     name: Сундук с эликсирами (4-й этаж башни)
     pageName: Сундук с эликсирами на 4-м этаже башни Ворона
@@ -859,8 +1010,15 @@
         a: The tower's second 7-plate lock after <a href="/en/locks/voran-bedside-chest/">Voran's chest</a>.
       - q: How many moves?
         a: 36 moves (7 plates, 10 links).
-- code: aYqYiAQgCACABA
-  slug: raven-tower-floor4-food-chest
+- slug: raven-tower-floor4-food-chest
+  pins: [5, 7, 2, 3, 5, 7]
+  links:
+    1: -3 -5
+    2: +4
+    3: -1
+    4: -1
+    5: -2
+    6: +3
   ru:
     name: Сундук с едой (4-й этаж башни)
     pageName: Сундук с едой на 4-м этаже башни Ворона
@@ -885,8 +1043,13 @@
     faq:
       - q: How many moves?
         a: 43 moves (6 plates, 7 links).
-- code: aMCmkAAGBBYAAA
-  slug: raven-tower-top-chest
+- slug: raven-tower-top-chest
+  pins: [5, 4, 1, 1, 6, 2]
+  links:
+    1: -2 -3 +4
+    3: +2 -4
+    4: +1 +5 +6
+    5: -1
   ru:
     name: Сундук на вершине башни Ворона
     card: Верх башни - кольцо ловкости, зов сна, велайис
@@ -909,7 +1072,14 @@
     faq:
       - q: How many moves?
         a: 48 moves (6 plates, 9 links).
-- code: aDasBgBgCAACCA
+- pins: [5, 1, 7, 7, 6, 4]
+  links:
+    1: +5 -6
+    2: +6
+    3: -1
+    4: -1
+    5: -6
+    6: -3
   credit:
     ru:
       by: Влад · DTF
@@ -921,8 +1091,14 @@
   en:
     name: Fire lizard cave box
     card: First box in the small cave by the fire-lizard circle in the east
-- code: RrGUCRKQIQ
-  slug: silas-tavern-basement-chest
+- slug: silas-tavern-basement-chest
+  pins: [4, 3, 7, 2, 5]
+  links:
+    1: -2 -3
+    2: +1 -4
+    3: -1 +2 +4
+    4: -1 +5
+    5: -3
   ru:
     name: Сундук в подвале таверны
     card: Подводный сундук в подвале под таверной Силаса - топор Брана, квест «По шею»
@@ -953,29 +1129,51 @@
         a: "Swim: underwater tunnel from the lake behind the tavern, or descend from the storeroom."
       - q: How many moves?
         a: 30 moves (5 plates, 10 links).
-- code: Yt05ARCBAAARCA
+- pins: [2, 4, 4, 6, 2, 7]
+  links:
+    1: +2 +6
+    2: +3 -6
+    3: +4
+    5: +3 +6
+    6: -3
   ru:
     name: Сундук склада таверны
     card: Сундук справа в складе таверны за дверью за Силасом (бармен) - это не подвал
   en:
     name: Tavern storeroom chest
     card: Chest on the right in the tavern storeroom behind Silas's door (not the basement)
-- code: aSnYABCIZIICCA
+- pins: [5, 5, 6, 2, 7, 7]
+  links:
+    2: +3 -6
+    3: -2 +5 -6
+    4: +1 -3
+    5: -1 -6
+    6: -3
   ru:
     name: Склад таверны - дверь
     card: Запертая дверь в склад таверны Нового лагеря за барменом Силасом
   en:
     name: Tavern storeroom door
     card: Locked door to the New Camp tavern storeroom behind bartender Silas
-- code: aDAIAEhAAAQaAA
+- pins: [5, 1, 7, 1, 1, 3]
+  links:
+    2: +1 -4 +6
+    4: +6
+    5: +3 -4 -6
   ru:
     name: Сундук в домике напротив Джана
     card: Домик напротив Джана у пруда рядом с Новым лагерем - нужно переплыть; внутри чертёж «Дробителя камней» (требует кузнечное дело)
   en:
     name: Hut chest opposite Jan (New Camp)
     card: Hut opposite Jan, across the pond near the New Camp - swim over; inside, the Stone Crusher blueprint (needs Smithing)
-- code: bE0IBAAQkBCAEg
-  slug: graham-chest
+- slug: graham-chest
+  pins: [7, 2, 2, 6, 1, 3]
+  links:
+    1: +5
+    3: +1 -5 +6
+    4: +5
+    5: -2
+    6: +2 -4
   ru:
     name: Сундук Грэхэма
     card: Сундук картографа Грэхэма в Старом лагере - у хижины слева от Северных ворот, где покупают карту колонии за руду
@@ -1006,15 +1204,25 @@
         a: 40 moves and 6 plates  -  a long lock; text guides rarely give full pin positions and links.
       - q: How many moves?
         a: 40 moves (6 plates, 8 links).
-- code: SkCAAjAhAg
+- pins: [6, 2, 1, 1, 5]
+  links:
+    2: +3 +5
+    3: -1 +5
+    4: -3
+    5: +2
   ru:
     name: Сундук Граво
     card: Сундук старателя Граво в Старом лагере - его хижина у входа в замок (Северные ворота), напротив дома Диего; Граво правит репутацию
   en:
     name: Gravo's chest
     card: Digger Gravo's chest in the Old Camp - his hut by the castle entrance near the North Gate, across from Diego's hut; Gravo is the reputation fixer
-- code: Yix4ABIAASCSAE
-  slug: diego-chest
+- slug: diego-chest
+  pins: [2, 1, 6, 5, 4, 7]
+  links:
+    2: +3 -5
+    4: +2 -5
+    5: -2 +3 -6
+    6: +5
   ru:
     name: Сундук Диего
     card: Сундук Диего в Старом лагере - его хижина юго-восточнее ворот замка, с красной тканью и шкурами у входа; внутри отмычки, эссенция исцеления и руда
@@ -1045,23 +1253,38 @@
         a: '"Gothic 1 Remake Diego chest" and "Diego chest combination" are top queries  -  Diego is the most recognizable character in the series.'
       - q: How many moves?
         a: 40 moves (6 plates, 8 links).
-- code: aFhwAAABhgAAKY
+- pins: [5, 2, 4, 1, 4, 5]
+  links:
+    3: +4 -5
+    4: +1 -2
+    6: -2 -3 +4 -5
   ru:
     name: Сундук Грима
     card: Сундук старателя Грима в Старом лагере - рядом с Диего у ворот замка (слева от него); завязан на квест «Амулет»
   en:
     name: Grim's chest
     card: Digger Grim's chest in the Old Camp - next to Diego at the castle gate (to his left); tied to the Amulet quest
-- code: ZA4gEWAAAAASAQ
+- pins: [3, 1, 2, 7, 2, 1]
+  links:
+    1: +4 +6
+    2: +1 -3
+    5: +3 -6
+    6: +4
   ru:
     name: Сундук наёмника (у Грима)
     card: Сундук наёмника слева от Грима в Старом лагере, рядом с Диего у ворот замка
   en:
     name: Mercenary's chest (by Grim)
     card: Mercenary's chest to the left of Grim in the Old Camp, near Diego at the castle gate
-- code: TAmBLEwMAE
-  slug: popular-lock
+- slug: popular-lock
   suggest: false
+  pins: [7, 1, 2, 2, 5]
+  links:
+    1: -4 +5
+    2: +1 -3 -5
+    3: +1 -2
+    4: +1 -2
+    5: -4
   ru:
     name: Популярный замок
     card: Частый замок из копилки - полный набор связей в коде
@@ -1092,8 +1315,14 @@
         a: Same pin layout (5.71225), different links in the code. This lock needs <code>TAmBLEwMAE</code> specifically (10 links, 46 moves).
       - q: How many moves?
         a: 46 moves (5 plates, 10 links).
-- code: QLWBAQhAKg
-  slug: alberto-mine-hut-chest
+- slug: alberto-mine-hut-chest
+  pins: [1, 3, 7, 6, 5]
+  links:
+    1: -4
+    2: -4
+    3: +1 -5
+    4: +5
+    5: +1 +2
   credit:
     url: https://dtf.ru/id3493234
     ru:
@@ -1132,8 +1361,12 @@
         a: Submitted by <a href="https://dtf.ru/id3493234">nepetacataria · DTF</a> in a <a href="https://dtf.ru/games/5121406-kak-vskryt-zamki-v-gothic-1-remake?comment=65516715">comment</a> on the lockpicking guide.
       - q: How many moves?
         a: 36 moves (5 plates, 7 links).
-- code: IEAIAho
-  slug: alberto-mine-upstairs-left-chest
+- slug: alberto-mine-upstairs-left-chest
+  pins: [1, 2, 1, 1]
+  links:
+    1: -4
+    3: -2
+    4: +1 -2 -3
   credit:
     url: https://dtf.ru/id3493234
     ru:
@@ -1172,8 +1405,14 @@
         a: <a href="https://dtf.ru/id3493234">nepetacataria · DTF</a>, <a href="https://dtf.ru/games/5121406-kak-vskryt-zamki-v-gothic-1-remake?comment=65516715">DTF comment</a>.
       - q: How many moves?
         a: 20 moves (4 plates, 5 links).
-- code: QZ1wAFAKxU
-  slug: alberto-mine-upstairs-right-chest
+- slug: alberto-mine-upstairs-right-chest
+  pins: [1, 7, 4, 6, 4]
+  links:
+    1: -2
+    2: -5
+    3: -1
+    4: +1 +2 +3 -5
+    5: -2 -3 -4
   credit:
     url: https://dtf.ru/id3493234
     ru:
@@ -1212,8 +1451,14 @@
         a: <a href="https://dtf.ru/id3493234">nepetacataria · DTF</a>, <a href="https://dtf.ru/games/5121406-kak-vskryt-zamki-v-gothic-1-remake?comment=65516715">DTF comment</a>.
       - q: How many moves?
         a: 13 moves.
-- code: YuaSQAAQgoQJQA
-  slug: cavalorn-storeroom-door
+- slug: cavalorn-storeroom-door
+  pins: [2, 4, 5, 7, 5, 5]
+  links:
+    1: -2 +3
+    3: +1 -5
+    4: -2 -3 +6
+    5: -4 +6
+    6: +1
   credit:
     url: https://dtf.ru/id3493234
     ru:
@@ -1252,8 +1497,13 @@
         a: <a href="https://dtf.ru/id3493234">nepetacataria · DTF</a>, <a href="https://dtf.ru/games/5121406-kak-vskryt-zamki-v-gothic-1-remake?comment=65516715">DTF comment</a>.
       - q: How many moves?
         a: 41 moves (6 plates, 10 links).
-- code: YOEMSCgBGIQAAA
-  slug: old-to-new-camp-bandits-chest
+- slug: old-to-new-camp-bandits-chest
+  pins: [1, 4, 5, 2, 1, 4]
+  links:
+    1: +3 -5
+    2: -3 -4
+    3: +4 +6
+    4: -1 -3 +6
   credit:
     url: https://dtf.ru/id3493234
     ru:

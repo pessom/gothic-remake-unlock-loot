@@ -5,12 +5,14 @@
    - locks/<slug>/, en/locks/<slug>/ - страницы замков + редиректы со старых адресов
    - locks/index.html, en/locks/index.html - каталог из tools/templates/catalog.*.html
    - sitemap.xml
-   Число плиток, штифты, ходы и связи считаются по коду замка решателем из site/index.html.
+   Замок в locks.yaml записан явно (pins + links, см. tools/lock-format.mjs); код для ссылок
+   ?lock= и число ходов (решателем из site/index.html) считаются здесь.
    Запуск: npm run build:locks */
 import { readFileSync, writeFileSync, mkdirSync, rmSync, readdirSync } from 'fs';
 import { join } from 'path';
 import vm from 'vm';
 import YAML from 'yaml';
+import { parseLock, encodeLock } from './lock-format.mjs';
 
 const ROOT = new URL('..', import.meta.url).pathname;
 const SITE_DIR = join(ROOT, 'site'); /* корень сайта - выкладывается целиком */
@@ -33,47 +35,24 @@ function loadSolver() {
 }
 const solveLock = loadSolver();
 
-const CODE_ABC = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_';
-function decodeLock(code) {
-  if (typeof code !== 'string' || !/^[A-Za-z0-9_-]{5,24}$/.test(code)) return null;
-  const bits = [];
-  for (const ch of code) { const v = CODE_ABC.indexOf(ch); for (let b = 5; b >= 0; b--) bits.push((v >> b) & 1); }
-  let pos = 0;
-  const read = (w) => { let v = 0; for (let b = 0; b < w; b++) v = (v << 1) | bits[pos++]; return v; };
-  const n = read(3) + 3;
-  if (code.length !== Math.ceil((4 + 3 * n + 2 * n * (n - 1)) / 6)) return null;
-  read(1); // бит порядка строк - устарел, проверяется ниже
-  const pins = [];
-  for (let i = 0; i < n; i++) { const p = read(3); if (p > 6) return null; pins.push(p + 1); }
-  const link = [];
-  let links = 0;
-  for (let i = 0; i < n; i++) {
-    link.push(new Array(n).fill(0));
-    for (let j = 0; j < n; j++) {
-      if (i === j) continue;
-      const t = read(2);
-      if (t > 2) return null;
-      if (t) { links++; link[i][j] = t === 1 ? 1 : -1; }
-    }
-  }
-  return { n, pins, link, links };
-}
-
 /* ---------- проверка locks.yaml ---------- */
 const errors = [];
-const err = (L, msg) => errors.push(`${(L && (L.slug || L.code)) || '?'}: ${msg}`);
+const err = (L, msg) => errors.push(`${(L && (L.slug || (L.ru && L.ru.name) || L.code)) || '?'}: ${msg}`);
 const seen = { code: {}, slug: {}, fp: {} };
 if (!Array.isArray(LOCKS)) throw new Error('locks.yaml: ожидается список замков');
 for (const L of LOCKS) {
-  const dec = decodeLock(L.code);
-  if (!dec) { err(L, `неверный код замка «${L.code}»`); continue; }
-  /* бит порядка строк в коде устарел: сайт всегда пишет 0, иначе у одного замка два кода */
-  if (CODE_ABC.indexOf(L.code[0]) & 4)
-    err(L, `в коде установлен устаревший бит порядка строк - запиши код как «${CODE_ABC[CODE_ABC.indexOf(L.code[0]) & ~4] + L.code.slice(1)}»`);
+  if ('code' in L) err(L, 'поле code больше не используется - замок задают pins и links (из кода: npm run lock -- <код>)');
+  const lockErrs = [];
+  const dec = parseLock(L.pins, L.links, lockErrs);
+  lockErrs.forEach((e) => err(L, e));
+  if (!dec || lockErrs.length) continue;
   const seq = solveLock(dec.pins.slice(), dec.link);
-  if (!seq) { err(L, 'замок не решается - проверь код'); continue; }
-  Object.assign(L, { n: dec.n, pins: dec.pins, links: dec.links, moves: seq.length, fp: dec.n + '.' + dec.pins.join('') });
-  if (seen.code[L.code]) err(L, 'код повторяется');
+  if (!seq) { err(L, 'замок не решается - проверь pins и links'); continue; }
+  Object.assign(L, {
+    code: encodeLock(dec.pins, dec.link), n: dec.pins.length, linkCount: dec.link.flat().filter(Boolean).length,
+    moves: seq.length, fp: dec.pins.length + '.' + dec.pins.join(''),
+  });
+  if (seen.code[L.code]) err(L, 'точно такой же замок (штифты и связи) уже есть в списке');
   seen.code[L.code] = true;
   if (L.suggest !== false) {
     if (seen.fp[L.fp]) err(L, `те же штифты (${L.fp}), что у «${seen.fp[L.fp]}» - подсказка неоднозначна, у одного поставь suggest: false`);
@@ -112,8 +91,8 @@ function plural(n, one, few, many) {
   return many;
 }
 const META = {
-  ru: (L) => `${L.n} ${plural(L.n, 'плитка', 'плитки', 'плиток')} · ${L.moves} ${plural(L.moves, 'ход', 'хода', 'ходов')} · ${L.links} ${plural(L.links, 'связь', 'связи', 'связей')}`,
-  en: (L) => `${L.n} plates · ${L.moves} ${L.moves === 1 ? 'move' : 'moves'} · ${L.links} ${L.links === 1 ? 'link' : 'links'}`,
+  ru: (L) => `${L.n} ${plural(L.n, 'плитка', 'плитки', 'плиток')} · ${L.moves} ${plural(L.moves, 'ход', 'хода', 'ходов')} · ${L.linkCount} ${plural(L.linkCount, 'связь', 'связи', 'связей')}`,
+  en: (L) => `${L.n} plates · ${L.moves} ${L.moves === 1 ? 'move' : 'moves'} · ${L.linkCount} ${L.linkCount === 1 ? 'link' : 'links'}`,
 };
 const prefix = (lang) => (lang === 'en' ? '/en' : '');
 const pageUrl = (lang, slug) => `${prefix(lang)}/locks/${slug}/`;
