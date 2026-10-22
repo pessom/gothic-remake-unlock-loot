@@ -71,7 +71,7 @@ worker/             Cloudflare Worker: счётчик, копилка, анал�
   counter-worker.js, wrangler.toml
   scripts/            сводка воронки и сброс оценок (нужен STATS_SECRET)
 tests/              регрессионные тесты решателя, мастера, ссылок, подсказок
-docs/               внутренние заметки (locks-research.md), на сайт не попадают
+docs/               журнал решений (decisions.md) и заметки по замкам (locks-research.md), на сайт не попадают
 .github/workflows/  деплой сайта (pages.yml), воркера (worker.yml), очистка копилки (purge-locks.yml)
 ```
 
@@ -82,6 +82,8 @@ docs/               внутренние заметки (locks-research.md), н�
 Если основной домен не открывается, в подвале есть **зеркало** на jsDelivr (`gcore.jsdelivr.net`). Зеркало `1h8s.github.io` не подходит: GitHub Pages с кастомным доменом редиректит обратно на `unlockmyloot.com`. Зеркало отдаёт файлы прямо из git, поэтому собранного каталога там нет: решатель работает, но без подсказок по известным замкам.
 
 Каждый пуш в `main` собирает каталог из `locks.yaml` и деплоит сайт (GitHub Actions), а также воркер (Cloudflare Workers Builds, корневая папка — `worker/`). **Не менять** `id` KV в `worker/wrangler.toml` — оттуда подтягивается значение счётчика при миграции.
+
+Почему проект устроен именно так — в [журнале решений](docs/decisions.md).
 
 ## Запуск локально
 
