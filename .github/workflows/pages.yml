@@ -52,16 +52,7 @@ jobs:
         with:
           path: dist
 
+      # домен (gothic-remake-unlock-loot.pessom.xyz, см. CNAME) задан в
+      # Settings -> Pages и сохраняется между деплоями; токен CI менять его не может
       - id: deployment
         uses: actions/deploy-pages@v4
-
-      # домен сайта - из файла CNAME (единственное место, где он задан)
-      - name: Set custom domain
-        run: |
-          DOMAIN=$(tr -d ' \r\n' < CNAME)
-          curl -sf -X PUT \
-            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-            -H "Accept: application/vnd.github+json" \
-            https://api.github.com/repos/${{ github.repository }}/pages \
-            -d "{\"cname\":\"$DOMAIN\"}" \
-            || echo "::warning::Не удалось прописать домен $DOMAIN для GitHub Pages"
