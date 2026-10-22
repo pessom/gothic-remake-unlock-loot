@@ -391,9 +391,10 @@ var NAMED_LOCKS = (window.UML_LOCKS || []).map(function (l) {
 var SVG_CHECK = '<svg width="9" height="9" viewBox="0 0 10 10" fill="none"><path d="M1.5 5.5 4 8l4.5-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 var ARROW = '<svg width="12" height="12" viewBox="0 0 13 13" fill="none"><path d="M1 6.5h11M8 2l4.5 4.5L8 11" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
+/* мини-схема штифтов: как в игре, плитка 1 снизу */
 function pinsHtml(d) {
   var html = '<div class="lc-pins">';
-  for (var i = 0; i < d.n; i++) {
+  for (var i = d.n - 1; i >= 0; i--) {
     html += '<div class="lc-row"><span class="n">' + (i + 1) + '</span>';
     for (var p = 1; p <= 7; p++) {
       var cls = 'lc-hole' + (p === 4 ? ' c' : '') +
