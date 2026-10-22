@@ -2244,7 +2244,7 @@ window.addEventListener('hashchange', function () {
   if (extractConfigCode()) bootConfigFromUrl();
 });
 /* ---------- счётчик взломанных замков ---------- */
-var COUNTER_API = 'https://api.unlockmyloot.com';
+var COUNTER_API = window.UML_API || ''; /* адрес - в assets/config.js */
 var lastCounted = 0;
 
 /* воронка UX: батч в /events, без PII (только короткий sid сессии) */

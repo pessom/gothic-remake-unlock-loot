@@ -42,7 +42,7 @@ UnlockMyLoot перебирает все состояния замка и выд
 
 ## API (Cloudflare Worker)
 
-Статика на GitHub Pages, бэкенд — `api.unlockmyloot.com` (Durable Object + KV):
+Статика на GitHub Pages, бэкенд — Cloudflare Worker (Durable Object + KV). Адрес API задан в одном месте — `site/assets/config.js`. Сейчас воркер для этого сайта не развёрнут: адрес указывает на домен самого сайта, запросы получают 404 и тихо игнорируются, сайт работает без них. Чтобы подключить свой воркер — поднять его на отдельном поддомене (`worker/wrangler.toml`, `routes`), поменять адрес в `config.js` и `ALLOWED` в `worker/counter-worker.js`.
 
 | Метод | Путь | Назначение |
 | --- | --- | --- |

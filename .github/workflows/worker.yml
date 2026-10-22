@@ -3,6 +3,10 @@ name: Deploy Counter Worker
 on:
   workflow_dispatch:
 
+# адрес API - как в site/assets/config.js (воркер сейчас не развёрнут)
+env:
+  API: https://gothic-remake-unlock-loot.pessom.xyz
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -12,7 +16,7 @@ jobs:
       - name: Snapshot counter
         id: before
         run: |
-          COUNT=$(curl -sf https://api.unlockmyloot.com/count | jq -r '.opened // 0')
+          COUNT=$(curl -sf ${{ env.API }}/count | jq -r '.opened // 0')
           echo "count=$COUNT" >> "$GITHUB_OUTPUT"
           echo "Counter before deploy: $COUNT"
 
@@ -27,13 +31,13 @@ jobs:
         run: |
           BEFORE="${{ steps.before.outputs.count }}"
           sleep 5
-          AFTER=$(curl -sf https://api.unlockmyloot.com/count | jq -r '.opened')
+          AFTER=$(curl -sf ${{ env.API }}/count | jq -r '.opened')
           echo "Counter after deploy: $AFTER"
           if [ "$AFTER" -lt "$BEFORE" ]; then
             echo "Counter dropped from $BEFORE to $AFTER"
             exit 1
           fi
-          BUMP=$(curl -sf -X POST https://api.unlockmyloot.com/opened | jq -r '.opened')
+          BUMP=$(curl -sf -X POST ${{ env.API }}/opened | jq -r '.opened')
           if [ "$BUMP" != "$((AFTER + 1))" ]; then
             echo "POST failed (got $BUMP, expected $((AFTER + 1)))"
             exit 1

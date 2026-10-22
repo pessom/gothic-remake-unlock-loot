@@ -313,6 +313,7 @@
   </footer>
 </div>
 
+<script src="../assets/config.js"></script>
 <script src="locks-data.js"></script>
 <script>
 /* тема */
@@ -440,7 +441,7 @@ document.addEventListener('mousemove', function (e) {
 
 /* счётчик открытий из API на карточках «Известные» */
 (function renderNamedCounts() {
-  fetch('https://api.unlockmyloot.com/locks?limit=100')
+  fetch((window.UML_API || '') + '/locks?limit=100')
     .then(function (r) { return r.json(); })
     .then(function (data) {
       var cnt = {};
@@ -462,7 +463,7 @@ document.addEventListener('mousemove', function (e) {
 (function renderLive() {
   var named = {};
   NAMED_LOCKS.forEach(function (l) { named[l.code] = l.name; });
-  fetch('https://api.unlockmyloot.com/locks?limit=60')
+  fetch((window.UML_API || '') + '/locks?limit=60')
     .then(function (r) { return r.json(); })
     .then(function (data) {
       var html = '', shown = 0;
