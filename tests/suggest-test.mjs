@@ -3,6 +3,9 @@
 import { readFileSync } from 'node:fs';
 import vm from 'node:vm';
 
+// пути к сайту - от корня репозитория, откуда бы ни запускали
+process.chdir(new URL('..', import.meta.url).pathname);
+
 function loadSuggest(file) {
   const html = readFileSync(file, 'utf8');
   const grab = (re) => {
@@ -51,7 +54,7 @@ function loadSuggest(file) {
   return ctx;
 }
 
-for (const file of ['index.html', 'en/index.html']) {
+for (const file of ['site/index.html', 'site/en/index.html']) {
   const ctx = loadSuggest(file);
 
   // encodeConfig(base) не включает сдвинутые штифты

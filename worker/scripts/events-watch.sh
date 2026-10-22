@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Воронка UX UnlockMyLoot: сводка событий с API.
-# Один раз: wrangler secret put STATS_SECRET
-# Использование: STATS_SECRET=... ./events-watch.sh
+# Один раз (из папки worker/): wrangler secret put STATS_SECRET
+# Использование: STATS_SECRET=... worker/scripts/events-watch.sh
 
 set -euo pipefail
 
