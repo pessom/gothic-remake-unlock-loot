@@ -10,11 +10,7 @@
  * При первом запуске подтягивает значение из KV-ключа "opened".
  */
 var ALLOWED = [
-  "https://unlockmyloot.com",
-  "https://www.unlockmyloot.com",
-  "https://1h8s.github.io",
-  "https://cdn.jsdelivr.net",
-  "https://gcore.jsdelivr.net",
+  "https://gothic-remake-unlock-loot.pessom.xyz",
   "http://localhost:8000",
   "http://127.0.0.1:8000"
 ];

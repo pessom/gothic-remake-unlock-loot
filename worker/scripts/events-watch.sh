@@ -5,7 +5,7 @@
 
 set -euo pipefail
 
-API="${COUNTER_API:-https://api.unlockmyloot.com}/events"
+API="${COUNTER_API:-https://gothic-remake-unlock-loot.pessom.xyz}/events"
 SECRET="${STATS_SECRET:?Задай STATS_SECRET (wrangler secret put STATS_SECRET)}"
 TMP=$(mktemp)
 trap 'rm -f "$TMP"' EXIT

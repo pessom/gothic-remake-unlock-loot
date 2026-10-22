@@ -3,6 +3,10 @@ name: Purge lock pool
 on:
   workflow_dispatch:
 
+# адрес API - как в site/assets/config.js (воркер сейчас не развёрнут)
+env:
+  API: https://gothic-remake-unlock-loot.pessom.xyz
+
 jobs:
   purge:
     runs-on: ubuntu-latest
@@ -12,8 +16,8 @@ jobs:
       - name: Snapshot before
         id: before
         run: |
-          echo "count=$(curl -sf https://api.unlockmyloot.com/count | jq -r '.opened')" >> "$GITHUB_OUTPUT"
-          echo "locks=$(curl -sf 'https://api.unlockmyloot.com/locks?limit=1' | jq -r '.total')" >> "$GITHUB_OUTPUT"
+          echo "count=$(curl -sf ${{ env.API }}/count | jq -r '.opened')" >> "$GITHUB_OUTPUT"
+          echo "locks=$(curl -sf '${{ env.API }}/locks?limit=1' | jq -r '.total')" >> "$GITHUB_OUTPUT"
 
       - name: "Set purge secret and purge lk:/pi:"
         working-directory: worker
@@ -24,14 +28,14 @@ jobs:
           PURGE_SECRET=$(openssl rand -hex 24)
           printf '%s' "$PURGE_SECRET" | npx wrangler secret put PURGE_SECRET
           sleep 3
-          curl -sf -X POST "https://api.unlockmyloot.com/purge-locks" \
+          curl -sf -X POST "${{ env.API }}/purge-locks" \
             -H "X-Purge-Secret: $PURGE_SECRET" | tee purge-result.json
           jq -e '.ok == true' purge-result.json
 
       - name: Verify opened unchanged, locks empty
         run: |
-          COUNT=$(curl -sf https://api.unlockmyloot.com/count | jq -r '.opened')
-          LOCKS=$(curl -sf 'https://api.unlockmyloot.com/locks?limit=1' | jq -r '.total')
+          COUNT=$(curl -sf ${{ env.API }}/count | jq -r '.opened')
+          LOCKS=$(curl -sf '${{ env.API }}/locks?limit=1' | jq -r '.total')
           echo "opened: $COUNT (was ${{ steps.before.outputs.count }})"
           echo "locks total: $LOCKS (was ${{ steps.before.outputs.locks }})"
           test "$COUNT" = "${{ steps.before.outputs.count }}"

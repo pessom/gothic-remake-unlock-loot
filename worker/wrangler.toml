@@ -4,9 +4,13 @@ name = "unlockmyloot"
 main = "counter-worker.js"
 compatibility_date = "2026-06-01"
 
-routes = [
-  { pattern = "api.unlockmyloot.com", custom_domain = true }
-]
+# Маршрут (домен API) не задан: воркер для gothic-remake-unlock-loot.pessom.xyz пока не развёрнут.
+# НЕ ставить сюда домен самого сайта с custom_domain = true: Cloudflare заберёт домен
+# у GitHub Pages и сайт перестанет открываться. Для API нужен отдельный поддомен
+# (например api.gothic-remake-unlock-loot.pessom.xyz), его же - в site/assets/config.js.
+# routes = [
+#   { pattern = "api.<домен>", custom_domain = true }
+# ]
 
 [[kv_namespaces]]
 binding = "COUNTER"
