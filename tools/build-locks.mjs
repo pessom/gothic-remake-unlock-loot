@@ -42,7 +42,7 @@ function decodeLock(code) {
   const read = (w) => { let v = 0; for (let b = 0; b < w; b++) v = (v << 1) | bits[pos++]; return v; };
   const n = read(3) + 3;
   if (code.length !== Math.ceil((4 + 3 * n + 2 * n * (n - 1)) / 6)) return null;
-  read(1); // flip - на каталог не влияет
+  read(1); // бит порядка строк - устарел, проверяется ниже
   const pins = [];
   for (let i = 0; i < n; i++) { const p = read(3); if (p > 6) return null; pins.push(p + 1); }
   const link = [];
@@ -67,6 +67,9 @@ if (!Array.isArray(LOCKS)) throw new Error('locks.yaml: ожидается сп�
 for (const L of LOCKS) {
   const dec = decodeLock(L.code);
   if (!dec) { err(L, `неверный код замка «${L.code}»`); continue; }
+  /* бит порядка строк в коде устарел: сайт всегда пишет 0, иначе у одного замка два кода */
+  if (CODE_ABC.indexOf(L.code[0]) & 4)
+    err(L, `в коде установлен устаревший бит порядка строк - запиши код как «${CODE_ABC[CODE_ABC.indexOf(L.code[0]) & ~4] + L.code.slice(1)}»`);
   const seq = solveLock(dec.pins.slice(), dec.link);
   if (!seq) { err(L, 'замок не решается - проверь код'); continue; }
   Object.assign(L, { n: dec.n, pins: dec.pins, links: dec.links, moves: seq.length, fp: dec.n + '.' + dec.pins.join('') });
@@ -116,9 +119,10 @@ const prefix = (lang) => (lang === 'en' ? '/en' : '');
 const pageUrl = (lang, slug) => `${prefix(lang)}/locks/${slug}/`;
 const solverUrl = (lang, code) => `${prefix(lang)}/?lock=${code}`;
 
+/* мини-схема стартовых штифтов: как в игре, плитка 1 снизу */
 function pinsHtml(pins) {
   let html = '<div class="lc-pins">';
-  for (let i = 0; i < pins.length; i++) {
+  for (let i = pins.length - 1; i >= 0; i--) {
     html += '<div class="lc-row"><span class="n">' + (i + 1) + '</span>';
     for (let p = 1; p <= 7; p++) {
       const cls = 'lc-hole' + (p === 4 ? ' c' : '') + (pins[i] === p ? (p === 4 ? ' pg' : ' p') : '');
@@ -147,8 +151,8 @@ function pageHtml(lang, L) {
   const ru = lang === 'ru';
   const params = '<span>' + META[lang](L).split(' · ').join('</span><span>') + '</span>';
   const T = ru
-    ? { pinNote: 'Стартовые позиции штифтов (1-7 слева направо, цель - центр, 4). Зелёный - уже в центре.', faq: 'Частые вопросы', footSolver: 'Открыть в решателе &rarr;', footAll: 'Все замки каталога', cta: 'Открыть этот замок в решателе &rarr;', cat: 'Каталог', sol: 'Решатель', where: 'Где находится', inside: 'Что внутри', stats: 'Параметры замка', foot: 'UnlockMyLoot - решатель и каталог замков Gothic 1 Remake.' }
-    : { pinNote: 'Starting pin positions (1-7 left to right, goal is the centre, 4). Green = already centred.', faq: 'FAQ', footSolver: 'Open in solver &rarr;', footAll: 'All catalog locks', cta: 'Open this lock in the solver &rarr;', cat: 'Catalog', sol: 'Solver', where: 'Where it is', inside: "What's inside", stats: 'Lock stats', foot: 'UnlockMyLoot - Gothic 1 Remake lockpick solver and lock catalog.' };
+    ? { pinNote: 'Стартовые позиции штифтов: плитка 1 снизу, как в игре; отверстия 1-7 слева направо, цель - центр, 4. Зелёный - уже в центре.', faq: 'Частые вопросы', footSolver: 'Открыть в решателе &rarr;', footAll: 'Все замки каталога', cta: 'Открыть этот замок в решателе &rarr;', cat: 'Каталог', sol: 'Решатель', where: 'Где находится', inside: 'Что внутри', stats: 'Параметры замка', foot: 'UnlockMyLoot - решатель и каталог замков Gothic 1 Remake.' }
+    : { pinNote: 'Starting pin positions: plate 1 at the bottom, as in the game; holes 1-7 left to right, goal is the centre, 4. Green = already centred.', faq: 'FAQ', footSolver: 'Open in solver &rarr;', footAll: 'All catalog locks', cta: 'Open this lock in the solver &rarr;', cat: 'Catalog', sol: 'Solver', where: 'Where it is', inside: "What's inside", stats: 'Lock stats', foot: 'UnlockMyLoot - Gothic 1 Remake lockpick solver and lock catalog.' };
   const ld = {
     '@context': 'https://schema.org',
     '@graph': [
