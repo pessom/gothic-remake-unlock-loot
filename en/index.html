@@ -1751,6 +1751,7 @@
 <canvas id="confettiCanvas" class="confetti" hidden aria-hidden="true"></canvas>
 -->
 
+<script src="../locks/locks-data.js"></script>
 <script id="solver-core">
 /* ===================== ЯДРО РЕШАТЕЛЯ =====================
    Состояние: массив позиций штифтов (1..7), цель - все 4.
@@ -4242,8 +4243,8 @@ function captureLockReport() {
     var base = lockBasePins();
     var code = encodeConfig(base);
     if (!code || code === SUGGESTED_CODE) return null;
-    /* /suggest index - by the base layout only: pins shifted by probes can
-       match another lock's starting layout */
+    /* the pool is stats only (suggestions come from locks.yaml); base pins:
+       pins shifted by probes can match another lock's start */
     return { code: code, pins: pinsKeyOf(base) };
   } catch (e) { return null; }
 }
@@ -4264,62 +4265,12 @@ function matrixEmpty() {
       if (link[i][j]) return false;
   return true;
 }
-function suggestFetch(pk) {
-  return fetch(COUNTER_API + '/suggest?pins=' + encodeURIComponent(pk))
-    .then(function (r) { return r.json(); })
-    .catch(function () { return null; });
-}
-/* Curated verified locks: suggest instantly at 100% confidence without crowd
-   stats. fp = N + '.' + pins. Keep in sync with NAMED_LOCKS in en/locks/index.html. */
-var KNOWN_LOCKS = [
-  { fp: '6.562211', code: 'aUkAACUBAAJikA', name: 'Ruined Tower door' },
-  { fp: '5.63217', code: 'SojAgCBDQA', name: "Scatty's chest" },
-  { fp: '4.7761', code: 'LagFFgA', name: "Cor Galom's chest" },
-  { fp: '6.665714', code: 'a2YMQAAIiECEAA', name: "Cor Galom's bedroom chest" },
-  { fp: '6.151726', code: 'YQY0gBgAAGACIE', name: 'Swamp Camp forge chest' },
-  { fp: '5.37265', code: 'RY2VUBQAiA', name: "Rice Lord's storeroom (3rd floor)" },
-  { fp: '6.215431', code: 'YiNAIJpEEAiAAA', name: "Door to Gomez's chambers" },
-  { fp: '4.1311', code: 'IIAKWgA', name: "Chest in Gomez's throne hall" },
-  { fp: '6.141571', code: 'YMTCAKIgIEBiAA', name: 'Dungeon door by the executed ghost' },
-  { fp: '7.1131767', code: 'gBDXAECQhAAQAQAIRAA', name: "Arlin's dungeon key" },
-  { fp: '6.732626', code: 'bI02qgAAIBgEAg', name: "Gomez's wine cellar" },
-  { fp: '5.61217', code: 'SgjQQDUgCI', name: "Gomez bedside chest" },
-  { fp: '6.317122', code: 'ZDAkKqACQECQAA', name: "Wall chest in Gomez's chambers" },
-  { fp: '7.7647275', code: 'jV46BEAAIAAAJLASAAA', name: "Voran's bedside chest" },
-  { fp: '5.77772', code: 'TbYwABSyBC', name: "Door to Arto's room" },
-  { fp: '6.433216', code: 'ZpEUEAAAgASIAk', name: "Arto's far bed chest" },
-  { fp: '6.265657', code: 'Y2WYAEGAAIGEAY', name: "Arto's near bed chest" },
-  { fp: '6.127765', code: 'YHayiAREIAIABE', name: "Door on Gomez's bedrooms floor" },
-  { fp: '5.45777', code: 'RzbBFITEQQ', name: 'Far bed chest (bedrooms floor)' },
-  { fp: '6.363777', code: 'ZVbYAEKEBgECAA', name: 'Near bed chest (bedrooms floor)' },
-  { fp: '6.764554', code: 'bVyMKQAAGQAAWA', name: 'Raven Tower left chest' },
-  { fp: '6.722137', code: 'bEhYigAEVCQEAA', name: 'Raven Tower right chest' },
-  { fp: '6.235761', code: 'YqahUKAAACIIAA', name: 'Chest by stairs (Raven Tower floor 2)' },
-  { fp: '5.27567', code: 'Q6XCAhAglI', name: 'Second chest on Raven Tower floor 2' },
-  { fp: '5.22657', code: 'QmzSSoBAAg', name: 'Chest at entrance (Raven Tower floor 3)' },
-  { fp: '5.37131', code: 'RYIBEylAIA', name: 'Empty chest (Raven Tower floor 3)' },
-  { fp: '7.4667174', code: 'h24ZgUAAEAQgAwAKQAA', name: 'Elixir chest (Raven Tower floor 4)' },
-  { fp: '6.572357', code: 'aYqYiAQgCACABA', name: 'Food chest (Raven Tower floor 4)' },
-  { fp: '6.541162', code: 'aMCmkAAGBBYAAA', name: 'Chest at top of Raven Tower' },
-  { fp: '6.517764', code: 'aDasBgBgCAACCA', name: 'Fire lizard cave box' },
-  { fp: '5.43725', code: 'RrGUCRKQIQ', name: "Silas tavern basement chest" },
-  { fp: '6.244627', code: 'Yt05ARCBAAARCA', name: 'Tavern storeroom chest' },
-  { fp: '6.556277', code: 'aSnYABCIZIICCA', name: 'Tavern storeroom door' },
-  { fp: '6.517113', code: 'aDAIAEhAAAQaAA', name: 'Hut chest opposite Jan (New Camp)' },
-  { fp: '6.722613', code: 'bE0IBAAQkBCAEg', name: "Graham's chest" },
-  { fp: '5.62115', code: 'SkCAAjAhAg', name: "Gravo's chest" },
-  { fp: '6.216547', code: 'Yix4ABIAASCSAE', name: "Diego's chest" },
-  { fp: '6.524145', code: 'aFhwAAABhgAAKY', name: "Grim's chest" },
-  { fp: '6.312721', code: 'ZA4gEWAAAAASAQ', name: "Mercenary's chest (by Grim)" },
-  { fp: '5.13765', code: 'ULWBAQhAKg', name: "Chest in Alberto's mine hut" },
-  { fp: '4.1211', code: 'MEAIAho', name: "Left chest upstairs in Alberto's mine" },
-  { fp: '5.17464', code: 'UZ1wAFAKxU', name: "Right chest upstairs in Alberto's mine" },
-  { fp: '6.245755', code: 'cuaSQAAQgoQJQA', name: "Hunter Cavalorn's storeroom door" },
-  { fp: '6.145214', code: 'cOEMSCgBGIQAAA', name: 'Chest by bandits on the path to the New Camp' }
-];
-/* Nameless popular layouts are not suggested from the client: identical pins can
-   have different links, so we wait for a confident /suggest response. */
-var POPULAR_LOCKS = [];
+/* Known locks - from locks.yaml (tools/build-locks.mjs -> locks/locks-data.js).
+   Link suggestions come only from them: matching starting pins offer that
+   lock's links (the wizard still checks them with probes). suggest: false -
+   do not suggest (unnamed layouts). fp = N + '.' + pins. */
+var KNOWN_LOCKS = (window.UML_LOCKS || []).filter(function (l) { return l.suggest !== false; })
+  .map(function (l) { return { fp: l.fp, code: l.code, name: l.en.name }; });
 var LOCK_COUNTS = {};
 function loadLockCounts() {
   fetch(COUNTER_API + '/locks?limit=100')
@@ -4337,17 +4288,10 @@ function knownLockFor() {
   for (var i = 0; i < KNOWN_LOCKS.length; i++)
     if (fps[KNOWN_LOCKS[i].fp])
       return { found: true, known: true, code: KNOWN_LOCKS[i].code, name: KNOWN_LOCKS[i].name };
-  for (var k = 0; k < POPULAR_LOCKS.length; k++)
-    if (fps[POPULAR_LOCKS[k].fp])
-      return { found: true, known: true, code: POPULAR_LOCKS[k].code, popular: true };
   return null;
 }
 function suggestLookup(cb) {
-  var known = knownLockFor();
-  if (known) { cb(known); return; }
-  suggestFetch(pinsKeyOf(lockBasePins())).then(function (d) {
-    cb(d && d.found ? d : null);
-  });
+  cb(knownLockFor());
 }
 function applySuggestedLinks(code) {
   var savedPins = pins.slice(), savedLink = link.map(function (r) { return r.slice(); }),

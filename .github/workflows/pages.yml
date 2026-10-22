@@ -23,6 +23,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      # каталог замков, страницы замков и sitemap собираются из locks.yaml
+      - name: Build lock catalog
+        run: |
+          npm ci
+          npm run build:locks
+
       - name: Enable and configure Pages
         uses: actions/configure-pages@v5
         with:
@@ -44,10 +55,13 @@ jobs:
       - id: deployment
         uses: actions/deploy-pages@v4
 
+      # домен сайта - из файла CNAME (единственное место, где он задан)
       - name: Set custom domain
         run: |
-          curl -s -X PUT \
+          DOMAIN=$(tr -d ' \r\n' < CNAME)
+          curl -sf -X PUT \
             -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
             -H "Accept: application/vnd.github+json" \
             https://api.github.com/repos/${{ github.repository }}/pages \
-            -d '{"cname":"unlockmyloot.com"}' || true
+            -d "{\"cname\":\"$DOMAIN\"}" \
+            || echo "::warning::Не удалось прописать домен $DOMAIN для GitHub Pages"

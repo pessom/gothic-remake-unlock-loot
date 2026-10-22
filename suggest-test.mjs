@@ -1,4 +1,5 @@
-// Тесты подсказок: merge applySuggestedLinks, lockBasePins, linkCellKnown.
+// Тесты подсказок: merge applySuggestedLinks, lockBasePins, linkCellKnown,
+// поиск известного замка из locks-data.js (knownLockFor).
 import { readFileSync } from 'node:fs';
 import vm from 'node:vm';
 
@@ -14,12 +15,18 @@ function loadSuggest(file) {
     grab(/function normalizeConfigCode[\s\S]*?\n\}/),
     grab(/function decodeConfig\(code, silent\)[\s\S]*?\n  return true;\n\}/),
     grab(/function wizEnsureZero[\s\S]*?function syncLinkManualZero[\s\S]*?\n\}/),
+    grab(/function pinsKeyOf[^\n]*\n/),
     grab(/function lockBasePins[\s\S]*?function applySuggestedLinks[\s\S]*?\n  return applied;\n\}/),
   ].join('\n');
   const ctx = {
     N: 0, pins: [], link: [], FLIP: false, pinsTouched: false,
     WIZ_MEM: { zero: null, base: null },
     SUGGESTED_CODE: null,
+    // как locks/locks-data.js: Скатти + безымянная расстановка с suggest: false
+    window: { UML_LOCKS: [
+      { code: 'SojAgCBDQA', fp: '5.63217', slug: 'scatty-chest', ru: { name: 'Сундук Скатти' }, en: { name: "Scatty's chest" } },
+      { code: 'TAmBLEwMAE', fp: '5.71225', suggest: false, ru: { name: 'Популярный замок' }, en: { name: 'Popular lock' } },
+    ] },
     localStorage: { setItem() {}, getItem() { return null; } },
     wizMemReset() { ctx.WIZ_MEM.zero = null; ctx.WIZ_MEM.base = null; },
     wizMk2d(fill) {
@@ -38,7 +45,7 @@ function loadSuggest(file) {
     src + '\n;this.encodeConfig=encodeConfig;this.decodeConfig=decodeConfig;' +
     'this.applySuggestedLinks=applySuggestedLinks;this.lockBasePins=lockBasePins;' +
     'this.linkCellKnown=linkCellKnown;this.matrixUnknownCount=matrixUnknownCount;' +
-    'this.syncLinkManualZero=syncLinkManualZero;',
+    'this.syncLinkManualZero=syncLinkManualZero;this.knownLockFor=knownLockFor;',
     ctx,
   );
   return ctx;
@@ -100,6 +107,18 @@ for (const file of ['index.html', 'en/index.html']) {
   ctx.syncLinkManualZero(0, 1, 0);
   if (ctx.matrixUnknownCount() !== 5) throw new Error(file + ': zero counts as known');
 
-  console.log(file + ': suggest merge + lockBasePins OK');
+  // известный замок - из locks-data.js и только по ИСХОДНЫМ штифтам
+  ctx.N = 5;
+  ctx.pins = [6, 3, 2, 1, 7];
+  ctx.WIZ_MEM.base = null;
+  const k = ctx.knownLockFor();
+  if (!k || k.code !== 'SojAgCBDQA' || !/Скатти|Scatty/.test(k.name)) throw new Error(file + ': known lock by pins not found');
+  ctx.WIZ_MEM.base = [6, 3, 2, 1, 6]; // пробы сдвинули штифты в расстановку Скатти - это другой замок
+  if (ctx.knownLockFor()) throw new Error(file + ': must not match by shifted pins');
+  ctx.WIZ_MEM.base = null;
+  ctx.pins = [7, 1, 2, 2, 5];
+  if (ctx.knownLockFor()) throw new Error(file + ': suggest: false must not be suggested');
+
+  console.log(file + ': suggest merge + lockBasePins + known locks OK');
 }
 console.log('OK');
